@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidak Ada Koneksi — APAR SRP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center px-4">
+    <div class="text-center max-w-sm">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M18.364 5.636a9 9 0 010 12.728M15.536 8.464a5 5 0 010 7.072M12 12h.01
+                         M3 3l18 18M8.464 8.464A5 5 0 006.344 12a5 5 0 001.192 3.196"/>
+            </svg>
+        </div>
+        <h1 class="text-xl font-bold text-gray-800 mb-2">Tidak Ada Koneksi</h1>
+        <p class="text-gray-500 text-sm mb-6 leading-relaxed">
+            Perangkat Anda sedang offline.<br>
+            Periksa koneksi internet lalu coba lagi.
+        </p>
+        <button onclick="window.location.reload()"
+            class="bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-lg
+                   text-sm font-medium transition-colors shadow">
+            Coba Lagi
+        </button>
+        <p class="text-xs text-gray-400 mt-8">APAR Management — PT Sinar Rimba Pasifik</p>
+    </div>
+</body>
+</html>

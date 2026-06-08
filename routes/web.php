@@ -1,0 +1,46 @@
+<?php
+
+use App\Http\Controllers\AparController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
+// Public routes
+Route::get('/scan', fn() => view('scan'))->name('scan');
+
+// Auth routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
+
+// Authenticated routes
+Route::middleware('auth')->group(function () {
+    Route::get('/', fn() => redirect()->route('dashboard'));
+    Route::get('/dashboard', [AparController::class, 'dashboard'])->name('dashboard');
+
+    // APAR management (these must be before the public show route for {code} pattern)
+    Route::get('/apar', [AparController::class, 'index'])->name('apar.index');
+    Route::get('/apar/create', [AparController::class, 'create'])->name('apar.create');
+    Route::post('/apar', [AparController::class, 'store'])->name('apar.store');
+    Route::get('/apar/{code}/edit', [AparController::class, 'edit'])->name('apar.edit');
+    Route::put('/apar/{code}', [AparController::class, 'update'])->name('apar.update');
+    Route::get('/apar/{code}/print', [AparController::class, 'print'])->name('apar.print');
+
+    // Superadmin only
+    Route::middleware('role:superadmin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+});
+
+// Public APAR detail — placed after auth routes so /apar/create is caught first
+Route::get('/apar/{code}', [AparController::class, 'show'])->name('apar.show');

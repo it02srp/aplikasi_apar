@@ -1,0 +1,49 @@
+{
+  "name": "APAR Management — SRP",
+  "short_name": "APAR SRP",
+  "description": "Sistem manajemen Alat Pemadam Api Ringan PT Sinar Rimba Pasifik",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6",
+  "theme_color": "#15803d",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan APAR",
+      "short_name": "Scan",
+      "description": "Buka scanner QR APAR",
+      "url": "/scan",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Daftar APAR",
+      "short_name": "APAR",
+      "description": "Lihat daftar APAR",
+      "url": "/apar",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}

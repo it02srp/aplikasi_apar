@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l app/Http/Controllers/AparController.php)",
+      "Bash(php -l app/Http/Controllers/AuthController.php)",
+      "Bash(php -l app/Http/Controllers/UserController.php)",
+      "Bash(php -l app/Http/Middleware/CheckRole.php)",
+      "Bash(php -l app/Models/Apar.php)",
+      "Bash(find . -name '*.blade.php' -exec sed -i -e 's/PT Solusi Rimba Prima/PT Sinar Rimba Pasifik/g' -e 's/— PT Solusi Rimba Prima/— PT Sinar Rimba Pasifik/g' -e 's/&copy; {{ date\\('\\\\''Y'\\\\'' \\) }} SRP/\\\\&copy; {{ date\\('\\\\''Y'\\\\''\\) }} SRP/g' '{}' ';')",
+      "Bash(xargs sed:*)",
+      "Bash(php artisan:*)"
+    ]
+  }
+}
