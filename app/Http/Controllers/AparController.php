@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AparTemplateExport;
+use App\Imports\AparImport;
 use App\Models\Apar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AparController extends Controller
 {
@@ -105,6 +108,35 @@ class AparController extends Controller
 
         return redirect()->route('apar.index')
             ->with('success', "APAR {$apar->code} berhasil diperbarui.");
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new AparTemplateExport(), 'template_import_apar.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls|max:5120',
+        ], [
+            'file.required' => 'Pilih file Excel terlebih dahulu.',
+            'file.mimes'    => 'File harus berformat .xlsx atau .xls.',
+            'file.max'      => 'Ukuran file maksimal 5MB.',
+        ]);
+
+        $import = new AparImport();
+        Excel::import($import, $request->file('file'));
+
+        $msg = "Import selesai: {$import->imported} data berhasil diimpor";
+        if ($import->skipped > 0) {
+            $msg .= ", {$import->skipped} baris dilewati";
+        }
+        $msg .= '.';
+
+        return redirect()->route('apar.index')
+            ->with('success', $msg)
+            ->with('import_errors', $import->errors);
     }
 
     public function print(string $code)

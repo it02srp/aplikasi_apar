@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/apar/{code}/edit', [AparController::class, 'edit'])->name('apar.edit');
     Route::put('/apar/{code}', [AparController::class, 'update'])->name('apar.update');
     Route::get('/apar/{code}/print', [AparController::class, 'print'])->name('apar.print');
+    Route::get('/apar/import/template', [AparController::class, 'downloadTemplate'])->name('apar.template');
+    Route::post('/apar/import', [AparController::class, 'import'])->name('apar.import');
 
     // Superadmin only
     Route::middleware('role:superadmin')->group(function () {

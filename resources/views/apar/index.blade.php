@@ -11,14 +11,126 @@
             <h2 class="text-xl font-bold text-gray-800">Daftar APAR</h2>
             <p class="text-gray-400 text-sm mt-0.5">{{ $apars->total() }} unit terdaftar</p>
         </div>
-        <a href="{{ route('apar.create') }}"
-           class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white
-                  px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        <div class="flex flex-wrap items-center gap-2">
+            {{-- Download Template --}}
+            <a href="{{ route('apar.template') }}"
+               class="inline-flex items-center gap-2 border border-green-700 text-green-700 hover:bg-green-50
+                      px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Template Excel
+            </a>
+            {{-- Import Button --}}
+            <button onclick="document.getElementById('modal-import').classList.remove('hidden')"
+               class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white
+                      px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                Import Excel
+            </button>
+            {{-- Tambah Manual --}}
+            <a href="{{ route('apar.create') }}"
+               class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white
+                      px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Tambah APAR
+            </a>
+        </div>
+    </div>
+
+    {{-- Import Errors --}}
+    @if(session('import_errors') && count(session('import_errors')) > 0)
+    <div class="bg-yellow-50 border border-yellow-300 rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
             </svg>
-            Tambah APAR
-        </a>
+            <p class="font-semibold text-yellow-800 text-sm">Detail baris yang dilewati:</p>
+        </div>
+        <ul class="space-y-1 max-h-40 overflow-y-auto">
+            @foreach(session('import_errors') as $err)
+                <li class="text-xs text-yellow-700 flex items-start gap-1">
+                    <span class="mt-0.5">•</span><span>{{ $err }}</span>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    {{-- Modal Import --}}
+    <div id="modal-import" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="font-bold text-gray-800 text-lg">Import Data APAR</h3>
+                <button onclick="document.getElementById('modal-import').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ route('apar.import') }}" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+
+                {{-- Step guide --}}
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800 space-y-1.5">
+                    <p class="font-semibold text-green-900 mb-2">Cara import:</p>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                        <span>Download template Excel dengan tombol <strong>Template Excel</strong></span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                        <span>Isi data di sheet <strong>Data APAR</strong>, hapus baris contoh hijau</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                        <span>Upload file di sini, lalu klik <strong>Import Sekarang</strong></span>
+                    </div>
+                </div>
+
+                {{-- File input --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pilih File Excel</label>
+                    <div id="drop-zone"
+                         class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center
+                                hover:border-green-400 transition-colors cursor-pointer"
+                         onclick="document.getElementById('excel-file').click()">
+                        <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p class="text-sm text-gray-500" id="file-label">Klik untuk pilih file .xlsx / .xls</p>
+                        <p class="text-xs text-gray-400 mt-1">Maksimal 5MB</p>
+                    </div>
+                    <input type="file" id="excel-file" name="file" accept=".xlsx,.xls" class="hidden"
+                           onchange="document.getElementById('file-label').textContent = this.files[0]?.name ?? 'Klik untuk pilih file'">
+                    @error('file')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="submit"
+                        class="flex-1 bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                        Import Sekarang
+                    </button>
+                    <button type="button"
+                        onclick="document.getElementById('modal-import').classList.add('hidden')"
+                        class="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     {{-- Filter Bar --}}
