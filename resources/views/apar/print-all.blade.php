@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Print QR — {{ $apar->code }}</title>
+    <title>Print Semua QR APAR</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         @page {
-            size: 3cm auto;
-            margin: 0 0 0 0.2cm;  /* tambah margin kiri page */
+            size: 10cm auto;
+            margin: 0;
         }
 
         /* ── Screen preview ── */
@@ -17,17 +17,14 @@
             body {
                 background: #e5e7eb;
                 min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 16px;
                 padding: 24px;
                 font-family: Arial, sans-serif;
             }
             .actions {
                 display: flex;
                 gap: 8px;
+                margin-bottom: 20px;
+                justify-content: center;
             }
             .btn-print {
                 background: #166534;
@@ -49,12 +46,18 @@
                 font-weight: 600;
                 text-decoration: none;
             }
+            .label-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 148px);
+                gap: 12px;
+                justify-content: center;
+            }
             .label-card {
-                box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
             }
         }
 
-        /* ── Print — Zebra GT800 ── */
+        /* ── Print — Zebra GT800, lebar kertas 10cm ── */
         @media print {
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
@@ -62,16 +65,32 @@
 
             .actions { display: none !important; }
 
+            .label-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 3cm);
+                gap: 0.3cm;
+                width: fit-content;
+                margin: 0 0.28cm;
+            }
+
+            .label-wrapper {
+                width: 3cm;
+                height: 4cm;
+                padding: 0;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
             .label-card {
-                width: 3cm !important;
-                height: 4cm !important;
+                width: 3cm;
+                height: 4cm;
                 border: 0.5px solid #ccc !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                overflow: hidden !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow: hidden;
             }
 
             .label-header {
@@ -92,7 +111,7 @@
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                padding: 0.05cm 0 0 3cm !important;  /* tambah left 0.2cm */
+                padding: 0.3cm 0 0.15cm 0 !important;  /* ubah nilai top (0.05cm) untuk jarak dari header */
                 width: 100% !important;
             }
 
@@ -107,16 +126,21 @@
                 font-weight: 700 !important;
                 color: #000 !important;
                 text-align: center !important;
-                padding: 0 0.1cm 0.4cm !important;  /* was 0.5cm top */
+                padding: 0 0.1cm 1.5cm !important;
                 letter-spacing: 0 !important;
                 width: 100% !important;
             }
         }
 
-        /* ── Shared ── */
+        /* ── Shared (screen + print base) ── */
+        .label-wrapper {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+        }
+
         .label-card {
-            width: 3cm;
-            height: 4cm;
+            width: 100%;
             background: white;
             border: 1px solid #374151;
             border-radius: 6px;
@@ -137,16 +161,15 @@
             letter-spacing: 0.3px;
             text-transform: uppercase;
             width: 100%;
-            flex-shrink: 0;
         }
 
         .label-qr {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            padding: 0.05cm 0.1cm 0 !important;  /* was 1cm */
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 6px;
         }
 
         .label-footer {
@@ -163,20 +186,27 @@
 <body>
 
     <div class="actions">
-        <button class="btn-print" onclick="window.print()">🖨️ Cetak</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Cetak Semua ({{ $apars->count() }} label)</button>
         <a class="btn-back" href="{{ route('apar.index') }}">← Kembali</a>
     </div>
 
-    <div class="label-card">
-        <div class="label-header">PT. SINAR RIMBA PASIFIK</div>
-        <div class="label-qr">
-            <div id="qrcode"></div>
+    <div class="label-grid">
+        @foreach($apars as $i => $apar)
+        <div class="label-wrapper">
+            <div class="label-card">
+                <div class="label-header">PT. SINAR RIMBA PASIFIK</div>
+                <div class="label-qr">
+                    <div id="qr-{{ $i }}"></div>
+                </div>
+                <div class="label-footer">{{ $apar->code }}</div>
+            </div>
         </div>
-        <div class="label-footer">{{ $apar->code }}</div>
+        @endforeach
     </div>
 
     <script>
-        new QRCode(document.getElementById("qrcode"), {
+        @foreach($apars as $i => $apar)
+        new QRCode(document.getElementById("qr-{{ $i }}"), {
             text: "{{ url('/apar/' . $apar->code) }}",
             width: 83,
             height: 83,
@@ -184,6 +214,7 @@
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.M
         });
+        @endforeach
     </script>
 </body>
 </html>

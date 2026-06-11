@@ -12,6 +12,16 @@
             <p class="text-gray-400 text-sm mt-0.5">{{ $apars->total() }} unit terdaftar</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
+            {{-- Print Semua --}}
+            <button type="button" onclick="printAll()"
+               class="inline-flex items-center gap-2 border border-gray-400 text-gray-600 hover:bg-gray-50
+                      px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                </svg>
+                Print Semua
+            </button>
             {{-- Download Template --}}
             <a href="{{ route('apar.template') }}"
                class="inline-flex items-center gap-2 border border-green-700 text-green-700 hover:bg-green-50
@@ -277,11 +287,18 @@
                                           bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
                                     Edit
                                 </a>
-                                <a href="{{ route('apar.print', $apar->code) }}" target="_blank"
-                                   class="inline-block px-2.5 py-1 rounded text-xs font-medium
-                                          bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                                <button type="button"
+                                        onclick="printApar('{{ $apar->code }}')"
+                                        class="inline-block px-2.5 py-1 rounded text-xs font-medium
+                                               bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                                     Print
-                                </a>
+                                </button>
+                                <button type="button"
+                                        onclick="confirmDelete('{{ $apar->code }}')"
+                                        class="inline-block px-2.5 py-1 rounded text-xs font-medium
+                                               bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
+                                    Hapus
+                                </button>
                             </div>
                         </td>
 
@@ -300,4 +317,68 @@
     </div>
 
 </div>
+
+{{-- Modal Konfirmasi Hapus --}}
+<div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+        <div class="p-6 text-center">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-1">Hapus APAR</h3>
+            <p class="text-sm text-gray-500 mb-1">Yakin ingin menghapus APAR</p>
+            <p class="text-sm font-semibold text-gray-800 mb-4" id="delete-code-label"></p>
+            <p class="text-xs text-red-500 mb-6">Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3">
+                <button type="button"
+                        onclick="document.getElementById('modal-delete').classList.add('hidden')"
+                        class="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                    Batal
+                </button>
+                <form id="form-delete" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 px-6 rounded-lg text-sm font-semibold transition-colors">
+                        Hapus
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Hidden iframe untuk print --}}
+<iframe id="print-frame" style="display:none;"></iframe>
+
+@push('scripts')
+<script>
+function printApar(code) {
+    const frame = document.getElementById('print-frame');
+    frame.src = '/apar/' + code + '/print';
+    frame.onload = function () {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+    };
+}
+
+function printAll() {
+    const frame = document.getElementById('print-frame');
+    frame.src = '{{ route('apar.print-all') }}';
+    frame.onload = function () {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+    };
+}
+
+function confirmDelete(code) {
+    document.getElementById('delete-code-label').textContent = code + '?';
+    document.getElementById('form-delete').action = '/apar/' + code;
+    document.getElementById('modal-delete').classList.remove('hidden');
+}
+</script>
+@endpush
 @endsection

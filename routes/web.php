@@ -29,9 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/apar', [AparController::class, 'store'])->name('apar.store');
     Route::get('/apar/{code}/edit', [AparController::class, 'edit'])->name('apar.edit');
     Route::put('/apar/{code}', [AparController::class, 'update'])->name('apar.update');
+    Route::get('/apar/print-all', [AparController::class, 'printAll'])->name('apar.print-all');
     Route::get('/apar/{code}/print', [AparController::class, 'print'])->name('apar.print');
     Route::get('/apar/import/template', [AparController::class, 'downloadTemplate'])->name('apar.template');
     Route::post('/apar/import', [AparController::class, 'import'])->name('apar.import');
+    Route::delete('/apar/{code}', [AparController::class, 'destroy'])->name('apar.destroy');
 
     // Superadmin only
     Route::middleware('role:superadmin')->group(function () {

@@ -110,6 +110,15 @@ class AparController extends Controller
             ->with('success', "APAR {$apar->code} berhasil diperbarui.");
     }
 
+    public function destroy(string $code)
+    {
+        $apar = Apar::where('code', $code)->firstOrFail();
+        $apar->delete();
+
+        return redirect()->route('apar.index')
+            ->with('success', "APAR {$code} berhasil dihapus.");
+    }
+
     public function downloadTemplate()
     {
         return Excel::download(new AparTemplateExport(), 'template_import_apar.xlsx');
@@ -137,6 +146,12 @@ class AparController extends Controller
         return redirect()->route('apar.index')
             ->with('success', $msg)
             ->with('import_errors', $import->errors);
+    }
+
+    public function printAll()
+    {
+        $apars = Apar::orderBy('code')->get();
+        return view('apar.print-all', compact('apars'));
     }
 
     public function print(string $code)
