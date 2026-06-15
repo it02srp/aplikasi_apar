@@ -79,6 +79,36 @@ class AparController extends Controller
         return view('apar.show', compact('apar'));
     }
 
+    public function storeMaintenanceAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'apar_code'         => 'required|exists:apars,code',
+            'maintenance_date'  => 'required|date',
+            'maintenance_type'  => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
+            'technician'        => 'nullable|string|max:255',
+            'notes'             => 'nullable|string',
+        ], [
+            'apar_code.required' => 'Pilih APAR terlebih dahulu.',
+            'apar_code.exists'   => 'APAR tidak ditemukan.',
+            'maintenance_date.required' => 'Tanggal maintenance wajib diisi.',
+            'maintenance_type.required' => 'Jenis maintenance wajib dipilih.',
+        ]);
+
+        $apar = Apar::where('code', $validated['apar_code'])->firstOrFail();
+
+        AparMaintenance::create([
+            'apar_id'          => $apar->id,
+            'maintenance_date' => $validated['maintenance_date'],
+            'maintenance_type' => $validated['maintenance_type'],
+            'technician'       => $validated['technician'] ?? null,
+            'notes'            => $validated['notes'] ?? null,
+            'performed_by'     => Auth::id(),
+        ]);
+
+        return redirect()->route('apar.maintenance.index')
+            ->with('success', "Maintenance {$apar->code} berhasil dicatat.");
+    }
+
     public function storeMaintenance(Request $request, string $code)
     {
         $apar = Apar::where('code', $code)->firstOrFail();
@@ -108,8 +138,60 @@ class AparController extends Controller
         $code = $maintenance->apar->code;
         $maintenance->delete();
 
+        // Redirect kembali ke halaman asal (list atau show)
+        $from = request()->query('from');
+        if ($from === 'list') {
+            return redirect()->route('apar.maintenance.index')
+                ->with('success', 'Record maintenance berhasil dihapus.');
+        }
+
         return redirect()->route('apar.show', $code)
             ->with('success', 'Record maintenance berhasil dihapus.');
+    }
+
+    public function maintenanceIndex(Request $request)
+    {
+        $query = AparMaintenance::with(['apar', 'performer'])
+            ->orderByDesc('maintenance_date')
+            ->orderByDesc('id');
+
+        if ($search = $request->input('search')) {
+            $query->whereHas('apar', function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($type = $request->input('type')) {
+            $query->where('maintenance_type', $type);
+        }
+
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('maintenance_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('maintenance_date', '<=', $dateTo);
+        }
+
+        $maintenances = $query->paginate(20)->withQueryString();
+
+        $today = Carbon::today();
+
+        $overdueInspection = Apar::whereNotNull('next_inspection_date')
+            ->whereDate('next_inspection_date', '<', $today)
+            ->orderBy('next_inspection_date')
+            ->get();
+
+        $upcomingInspection = Apar::whereNotNull('next_inspection_date')
+            ->whereDate('next_inspection_date', '>=', $today)
+            ->whereDate('next_inspection_date', '<=', $today->copy()->addDays(30))
+            ->orderBy('next_inspection_date')
+            ->get();
+
+        $aparList = Apar::orderBy('code')->get(['id', 'code', 'location']);
+
+        return view('apar.maintenance', compact('maintenances', 'overdueInspection', 'upcomingInspection', 'aparList'));
     }
 
     public function edit(string $code)

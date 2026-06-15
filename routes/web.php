@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/apar/{code}', [AparController::class, 'destroy'])->name('apar.destroy');
 
     // Maintenance history
+    Route::get('/maintenance', [AparController::class, 'maintenanceIndex'])->name('apar.maintenance.index');
+    Route::post('/maintenance', [AparController::class, 'storeMaintenanceAdmin'])->name('apar.maintenance.store.admin');
     Route::post('/apar/{code}/maintenance', [AparController::class, 'storeMaintenance'])->name('apar.maintenance.store');
     Route::delete('/apar/maintenance/{id}', [AparController::class, 'destroyMaintenance'])->name('apar.maintenance.destroy');
 
