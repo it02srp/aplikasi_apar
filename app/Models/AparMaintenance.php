@@ -9,6 +9,7 @@ class AparMaintenance extends Model
     protected $fillable = [
         'apar_id',
         'maintenance_date',
+        'next_inspection_date',
         'maintenance_type',
         'technician',
         'notes',
@@ -18,7 +19,8 @@ class AparMaintenance extends Model
     protected function casts(): array
     {
         return [
-            'maintenance_date' => 'date',
+            'maintenance_date'     => 'date',
+            'next_inspection_date' => 'date',
         ];
     }
 

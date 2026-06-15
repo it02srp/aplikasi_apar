@@ -144,7 +144,7 @@
                     @csrf
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs text-gray-600 font-medium">Tanggal Maintenance *</label>
+                            <label class="text-xs text-gray-600 font-medium">Tanggal Inspeksi *</label>
                             <input type="date" name="maintenance_date"
                                    value="{{ old('maintenance_date', date('Y-m-d')) }}"
                                    class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_date') border-red-400 @enderror">
@@ -153,20 +153,29 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="text-xs text-gray-600 font-medium">Jenis Maintenance *</label>
-                            <select name="maintenance_type"
-                                    class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_type') border-red-400 @enderror">
-                                <option value="">-- Pilih --</option>
-                                @foreach(['Inspeksi Rutin','Pengisian Ulang','Penggantian Komponen','Perbaikan','Lainnya'] as $type)
-                                    <option value="{{ $type }}" {{ old('maintenance_type') === $type ? 'selected' : '' }}>
-                                        {{ $type }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('maintenance_type')
+                            <label class="text-xs text-gray-600 font-medium">Inspeksi Berikutnya</label>
+                            <input type="date" name="next_inspection_date"
+                                   value="{{ old('next_inspection_date') }}"
+                                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('next_inspection_date') border-red-400 @enderror">
+                            @error('next_inspection_date')
                                 <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-600 font-medium">Jenis Maintenance *</label>
+                        <select name="maintenance_type"
+                                class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_type') border-red-400 @enderror">
+                            <option value="">-- Pilih --</option>
+                            @foreach(['Inspeksi Rutin','Pengisian Ulang','Penggantian Komponen','Perbaikan','Lainnya'] as $type)
+                                <option value="{{ $type }}" {{ old('maintenance_type') === $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('maintenance_type')
+                            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="text-xs text-gray-600 font-medium">Teknisi / Petugas</label>
@@ -255,6 +264,16 @@
                                     @if($maintenance->technician)
                                     <p class="text-xs text-gray-600 mt-1.5">
                                         <span class="font-medium">Teknisi:</span> {{ $maintenance->technician }}
+                                    </p>
+                                    @endif
+
+                                    @if($maintenance->next_inspection_date)
+                                    <p class="text-xs mt-1.5">
+                                        <span class="text-gray-500 font-medium">Inspeksi berikutnya:</span>
+                                        <span class="font-semibold
+                                            {{ $maintenance->next_inspection_date->isPast() ? 'text-red-600' : 'text-green-700' }}">
+                                            {{ $maintenance->next_inspection_date->format('d M Y') }}
+                                        </span>
                                     </p>
                                     @endif
 

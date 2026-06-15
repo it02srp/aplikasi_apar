@@ -54,9 +54,9 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    {{-- Tanggal --}}
+                    {{-- Tanggal Inspeksi --}}
                     <div>
-                        <label class="text-sm text-gray-700 font-medium block mb-1">Tanggal <span class="text-red-500">*</span></label>
+                        <label class="text-sm text-gray-700 font-medium block mb-1">Tanggal Inspeksi <span class="text-red-500">*</span></label>
                         <input type="date" name="maintenance_date" required
                                value="{{ old('maintenance_date', date('Y-m-d')) }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_date') border-red-400 @enderror">
@@ -65,20 +65,31 @@
                         @enderror
                     </div>
 
-                    {{-- Jenis --}}
+                    {{-- Inspeksi Berikutnya --}}
                     <div>
-                        <label class="text-sm text-gray-700 font-medium block mb-1">Jenis <span class="text-red-500">*</span></label>
-                        <select name="maintenance_type" required
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_type') border-red-400 @enderror">
-                            <option value="">-- Pilih --</option>
-                            @foreach(['Inspeksi Rutin','Pengisian Ulang','Penggantian Komponen','Perbaikan','Lainnya'] as $t)
-                                <option value="{{ $t }}" {{ old('maintenance_type') === $t ? 'selected' : '' }}>{{ $t }}</option>
-                            @endforeach
-                        </select>
-                        @error('maintenance_type')
+                        <label class="text-sm text-gray-700 font-medium block mb-1">Inspeksi Berikutnya</label>
+                        <input type="date" name="next_inspection_date"
+                               value="{{ old('next_inspection_date') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('next_inspection_date') border-red-400 @enderror">
+                        @error('next_inspection_date')
                             <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
+
+                {{-- Jenis --}}
+                <div>
+                    <label class="text-sm text-gray-700 font-medium block mb-1">Jenis Maintenance <span class="text-red-500">*</span></label>
+                    <select name="maintenance_type" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('maintenance_type') border-red-400 @enderror">
+                        <option value="">-- Pilih --</option>
+                        @foreach(['Inspeksi Rutin','Pengisian Ulang','Penggantian Komponen','Perbaikan','Lainnya'] as $t)
+                            <option value="{{ $t }}" {{ old('maintenance_type') === $t ? 'selected' : '' }}>{{ $t }}</option>
+                        @endforeach
+                    </select>
+                    @error('maintenance_type')
+                        <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Teknisi --}}
@@ -235,7 +246,8 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-100">
-                            <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Tanggal</th>
+                            <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Tgl Inspeksi</th>
+                            <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Inspeksi Berikutnya</th>
                             <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Kode APAR</th>
                             <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Lokasi</th>
                             <th class="text-left px-4 py-3 text-xs text-gray-500 font-semibold uppercase tracking-wide">Jenis</th>
@@ -259,6 +271,19 @@
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-4 py-3 text-gray-700 font-medium whitespace-nowrap">
                                 {{ $m->maintenance_date->format('d M Y') }}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                @if($m->next_inspection_date)
+                                    @php $isPast = $m->next_inspection_date->isPast(); @endphp
+                                    <span class="text-xs font-semibold {{ $isPast ? 'text-red-600' : 'text-green-700' }}">
+                                        {{ $m->next_inspection_date->format('d M Y') }}
+                                    </span>
+                                    @if($isPast)
+                                        <span class="block text-xs text-red-400">terlambat</span>
+                                    @endif
+                                @else
+                                    <span class="text-gray-300 text-xs">—</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('apar.show', $m->apar->code) }}"

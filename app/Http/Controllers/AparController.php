@@ -82,27 +82,36 @@ class AparController extends Controller
     public function storeMaintenanceAdmin(Request $request)
     {
         $validated = $request->validate([
-            'apar_code'         => 'required|exists:apars,code',
-            'maintenance_date'  => 'required|date',
-            'maintenance_type'  => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
-            'technician'        => 'nullable|string|max:255',
-            'notes'             => 'nullable|string',
+            'apar_code'             => 'required|exists:apars,code',
+            'maintenance_date'      => 'required|date',
+            'next_inspection_date'  => 'nullable|date|after:maintenance_date',
+            'maintenance_type'      => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
+            'technician'            => 'nullable|string|max:255',
+            'notes'                 => 'nullable|string',
         ], [
-            'apar_code.required' => 'Pilih APAR terlebih dahulu.',
-            'apar_code.exists'   => 'APAR tidak ditemukan.',
-            'maintenance_date.required' => 'Tanggal maintenance wajib diisi.',
-            'maintenance_type.required' => 'Jenis maintenance wajib dipilih.',
+            'apar_code.required'            => 'Pilih APAR terlebih dahulu.',
+            'apar_code.exists'              => 'APAR tidak ditemukan.',
+            'maintenance_date.required'     => 'Tanggal inspeksi wajib diisi.',
+            'maintenance_type.required'     => 'Jenis maintenance wajib dipilih.',
+            'next_inspection_date.after'    => 'Tanggal inspeksi berikutnya harus setelah tanggal inspeksi.',
         ]);
 
         $apar = Apar::where('code', $validated['apar_code'])->firstOrFail();
 
         AparMaintenance::create([
-            'apar_id'          => $apar->id,
-            'maintenance_date' => $validated['maintenance_date'],
-            'maintenance_type' => $validated['maintenance_type'],
-            'technician'       => $validated['technician'] ?? null,
-            'notes'            => $validated['notes'] ?? null,
-            'performed_by'     => Auth::id(),
+            'apar_id'              => $apar->id,
+            'maintenance_date'     => $validated['maintenance_date'],
+            'next_inspection_date' => $validated['next_inspection_date'] ?? null,
+            'maintenance_type'     => $validated['maintenance_type'],
+            'technician'           => $validated['technician'] ?? null,
+            'notes'                => $validated['notes'] ?? null,
+            'performed_by'         => Auth::id(),
+        ]);
+
+        // Update tanggal inspeksi di data APAR
+        $apar->update([
+            'last_inspection_date' => $validated['maintenance_date'],
+            'next_inspection_date' => $validated['next_inspection_date'] ?? $apar->next_inspection_date,
         ]);
 
         return redirect()->route('apar.maintenance.index')
@@ -114,22 +123,35 @@ class AparController extends Controller
         $apar = Apar::where('code', $code)->firstOrFail();
 
         $validated = $request->validate([
-            'maintenance_date'  => 'required|date',
-            'maintenance_type'  => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
-            'technician'        => 'nullable|string|max:255',
-            'notes'             => 'nullable|string',
+            'maintenance_date'      => 'required|date',
+            'next_inspection_date'  => 'nullable|date|after:maintenance_date',
+            'maintenance_type'      => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
+            'technician'            => 'nullable|string|max:255',
+            'notes'                 => 'nullable|string',
         ], [
-            'maintenance_date.required' => 'Tanggal maintenance wajib diisi.',
-            'maintenance_type.required' => 'Jenis maintenance wajib dipilih.',
+            'maintenance_date.required'  => 'Tanggal inspeksi wajib diisi.',
+            'maintenance_type.required'  => 'Jenis maintenance wajib dipilih.',
+            'next_inspection_date.after' => 'Tanggal inspeksi berikutnya harus setelah tanggal inspeksi.',
         ]);
 
-        $validated['apar_id']     = $apar->id;
-        $validated['performed_by'] = Auth::id();
+        AparMaintenance::create([
+            'apar_id'              => $apar->id,
+            'maintenance_date'     => $validated['maintenance_date'],
+            'next_inspection_date' => $validated['next_inspection_date'] ?? null,
+            'maintenance_type'     => $validated['maintenance_type'],
+            'technician'           => $validated['technician'] ?? null,
+            'notes'                => $validated['notes'] ?? null,
+            'performed_by'         => Auth::id(),
+        ]);
 
-        AparMaintenance::create($validated);
+        // Update tanggal inspeksi di data APAR
+        $apar->update([
+            'last_inspection_date' => $validated['maintenance_date'],
+            'next_inspection_date' => $validated['next_inspection_date'] ?? $apar->next_inspection_date,
+        ]);
 
-        return redirect()->route('apar.show', $apar->code)
-            ->with('success', 'History maintenance berhasil ditambahkan.');
+        return redirect()->route('apar.maintenance.index')
+            ->with('success', "Maintenance {$apar->code} berhasil dicatat.");
     }
 
     public function destroyMaintenance(int $id)
