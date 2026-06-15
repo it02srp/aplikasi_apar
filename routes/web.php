@@ -35,6 +35,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/apar/import', [AparController::class, 'import'])->name('apar.import');
     Route::delete('/apar/{code}', [AparController::class, 'destroy'])->name('apar.destroy');
 
+    // Maintenance history
+    Route::post('/apar/{code}/maintenance', [AparController::class, 'storeMaintenance'])->name('apar.maintenance.store');
+    Route::delete('/apar/maintenance/{id}', [AparController::class, 'destroyMaintenance'])->name('apar.maintenance.destroy');
+
     // Superadmin only
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');

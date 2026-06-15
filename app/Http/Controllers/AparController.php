@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Exports\AparTemplateExport;
 use App\Imports\AparImport;
 use App\Models\Apar;
+use App\Models\AparMaintenance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AparController extends Controller
@@ -73,8 +75,41 @@ class AparController extends Controller
 
     public function show(string $code)
     {
-        $apar = Apar::where('code', $code)->firstOrFail();
+        $apar = Apar::where('code', $code)->with('maintenances.performer')->firstOrFail();
         return view('apar.show', compact('apar'));
+    }
+
+    public function storeMaintenance(Request $request, string $code)
+    {
+        $apar = Apar::where('code', $code)->firstOrFail();
+
+        $validated = $request->validate([
+            'maintenance_date'  => 'required|date',
+            'maintenance_type'  => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
+            'technician'        => 'nullable|string|max:255',
+            'notes'             => 'nullable|string',
+        ], [
+            'maintenance_date.required' => 'Tanggal maintenance wajib diisi.',
+            'maintenance_type.required' => 'Jenis maintenance wajib dipilih.',
+        ]);
+
+        $validated['apar_id']     = $apar->id;
+        $validated['performed_by'] = Auth::id();
+
+        AparMaintenance::create($validated);
+
+        return redirect()->route('apar.show', $apar->code)
+            ->with('success', 'History maintenance berhasil ditambahkan.');
+    }
+
+    public function destroyMaintenance(int $id)
+    {
+        $maintenance = AparMaintenance::findOrFail($id);
+        $code = $maintenance->apar->code;
+        $maintenance->delete();
+
+        return redirect()->route('apar.show', $code)
+            ->with('success', 'Record maintenance berhasil dihapus.');
     }
 
     public function edit(string $code)

@@ -63,6 +63,16 @@ class Apar extends Model
         return !$this->isExpired() && !$this->isNearExpiry();
     }
 
+    public function maintenances()
+    {
+        return $this->hasMany(AparMaintenance::class)->orderByDesc('maintenance_date')->orderByDesc('id');
+    }
+
+    public function latestMaintenance()
+    {
+        return $this->hasOne(AparMaintenance::class)->orderByDesc('maintenance_date')->orderByDesc('id');
+    }
+
     public static function generateCode(): string
     {
         $last = static::orderByDesc('id')->first();
