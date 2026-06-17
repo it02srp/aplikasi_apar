@@ -156,10 +156,19 @@ class AparController extends Controller
             $query->whereDate('inspected_at', '<=', $dateTo);
         }
 
-        $inspections = $query->paginate(20)->withQueryString();
+        if ($year = $request->input('year')) {
+            $query->whereYear('inspected_at', $year);
+        }
+
+        $inspections = $query->paginate(25)->withQueryString();
         $aparList    = Apar::orderBy('code')->get(['id', 'code', 'location']);
 
-        return view('apar.inspection', compact('inspections', 'aparList'));
+        $availableYears = AparInspection::selectRaw('YEAR(inspected_at) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return view('apar.inspection', compact('inspections', 'aparList', 'availableYears'));
     }
 
     public function exportInspection(Request $request)
@@ -351,7 +360,11 @@ class AparController extends Controller
             $query->whereDate('maintenance_date', '<=', $dateTo);
         }
 
-        $maintenances = $query->paginate(20)->withQueryString();
+        if ($year = $request->input('year')) {
+            $query->whereYear('maintenance_date', $year);
+        }
+
+        $maintenances = $query->paginate(25)->withQueryString();
 
         $today = Carbon::today();
 
@@ -368,7 +381,12 @@ class AparController extends Controller
 
         $aparList = Apar::orderBy('code')->get(['id', 'code', 'location']);
 
-        return view('apar.maintenance', compact('maintenances', 'overdueInspection', 'upcomingInspection', 'aparList'));
+        $availableYears = AparMaintenance::selectRaw('YEAR(maintenance_date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return view('apar.maintenance', compact('maintenances', 'overdueInspection', 'upcomingInspection', 'aparList', 'availableYears'));
     }
 
     public function edit(string $code)
