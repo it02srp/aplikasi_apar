@@ -97,7 +97,7 @@
                 <div class="p-5 space-y-4">
                     @if($apar->is_maintenance && $apar->maintenance_started_at)
                     <div class="bg-orange-50 border border-orange-200 rounded-xl px-4 py-2 text-xs text-orange-700">
-                        Maintenance sejak: <strong>{{ $apar->maintenance_started_at->format('d M Y H:i') }}</strong>
+                        Maintenance sejak: <strong>{{ $apar->maintenance_started_at->format('d M Y') }}</strong>
                     </div>
                     @endif
 
@@ -177,7 +177,7 @@
                     @endif
 
                     <div class="border-t border-gray-100 pt-3">
-                        <p class="text-xs text-gray-400">Diperbarui: {{ $apar->updated_at->format('d M Y H:i') }}</p>
+                        <p class="text-xs text-gray-400">Diperbarui: {{ $apar->updated_at->format('d M Y') }}</p>
                     </div>
                 </div>
             </div>
@@ -287,7 +287,6 @@
                                 </span>
                                 <span class="text-xs text-gray-500">
                                     {{ $inspection->inspected_at->format('d M Y') }}
-                                    <span class="text-gray-400">{{ $inspection->inspected_at->format('H:i') }}</span>
                                 </span>
                             </div>
                             @auth

@@ -136,8 +136,7 @@
                         </td>
                         <td class="px-4 py-3 align-middle whitespace-nowrap">
                             <span class="font-semibold text-gray-700">{{ $inspection->inspected_at->format('d') }}</span>
-                            <span class="text-gray-400 text-xs ml-1">{{ $inspection->inspected_at->format('M') }}</span>
-                            <span class="text-gray-500 text-xs ml-1">{{ $inspection->inspected_at->format('H:i') }}</span>
+                            <span class="text-gray-400 text-xs ml-1">{{ $inspection->inspected_at->format('M Y') }}</span>
                         </td>
                         <td class="px-4 py-3 align-middle whitespace-nowrap">
                             <a href="{{ route('apar.show', $inspection->apar->code) }}"
