@@ -1,4 +1,4 @@
-﻿@extends('layouts.guest')
+@extends('layouts.guest')
 
 @section('title', 'APAR ' . $apar->code)
 
@@ -13,8 +13,12 @@
         </div>
 
         {{-- Status Badge --}}
-        <div class="text-center mb-4">
-            @if($apar->isExpired())
+        <div class="text-center mb-4 flex flex-wrap justify-center gap-2">
+            @if($apar->is_maintenance)
+                <span class="inline-block bg-orange-100 text-orange-700 border border-orange-300 text-base font-bold px-5 py-2 rounded-full">
+                    🔧 SEDANG MAINTENANCE
+                </span>
+            @elseif($apar->isExpired())
                 <span class="inline-block bg-red-100 text-red-700 border border-red-300 text-base font-bold px-5 py-2 rounded-full">
                     ⚠️ KADALUARSA
                 </span>
@@ -38,6 +42,40 @@
             </div>
 
             <div class="p-5 space-y-4">
+                {{-- Tombol Maintenance (hanya admin) --}}
+                @auth
+                <div class="flex justify-end">
+                    <form action="{{ route('apar.toggle-maintenance', $apar->code) }}" method="POST"
+                          onsubmit="return confirm('{{ $apar->is_maintenance ? 'Tandai APAR ini selesai maintenance?' : 'Tandai APAR ini sedang maintenance?' }}')">
+                        @csrf
+                        @if($apar->is_maintenance)
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Selesai Maintenance
+                            </button>
+                        @else
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Tandai Maintenance
+                            </button>
+                        @endif
+                    </form>
+                </div>
+                @if($apar->is_maintenance && $apar->maintenance_started_at)
+                <div class="bg-orange-50 border border-orange-200 rounded-xl px-4 py-2 text-xs text-orange-700">
+                    Maintenance dimulai sejak: <strong>{{ $apar->maintenance_started_at->format('d M Y H:i') }}</strong>
+                </div>
+                @endif
+                @endauth
+
                 {{-- Lokasi --}}
                 <div class="bg-gray-50 rounded-xl p-4">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Lokasi</p>
@@ -122,6 +160,161 @@
             </div>
         </div>
 
+        {{-- ============================================================ --}}
+        {{-- Pemeriksaan Berkala --}}
+        {{-- ============================================================ --}}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mt-4">
+            <div class="bg-yellow-600 px-6 py-3 text-white flex items-center justify-between">
+                <p class="font-bold text-sm uppercase tracking-wide">Pemeriksaan Berkala</p>
+                <span class="bg-yellow-500 text-yellow-100 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    {{ $apar->inspections->count() }} record
+                </span>
+            </div>
+
+            @auth
+            {{-- Form pemeriksaan berkala --}}
+            <div class="p-5 border-b border-gray-100 bg-yellow-50">
+                @if(session('success'))
+                    <div class="mb-3 bg-green-100 border border-green-300 text-green-800 text-sm rounded-lg px-4 py-2">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <p class="text-xs text-yellow-800 font-semibold uppercase tracking-wide mb-3">Tambah Pemeriksaan Berkala</p>
+                <p class="text-xs text-yellow-700 mb-3">Tanggal &amp; jam akan diambil otomatis saat disimpan.</p>
+
+                <form action="{{ route('apar.inspection.store', $apar->code) }}" method="POST" class="space-y-3">
+                    @csrf
+
+                    {{-- Kondisi checklist --}}
+                    @php
+                        $kondisiItems = [
+                            'kondisi_handle'    => '1 : Handle',
+                            'kondisi_selang'    => '2 : Selang',
+                            'kondisi_pin_kunci' => '3 : Pin Kunci',
+                            'kondisi_indikator' => '4 : Indikator',
+                            'kondisi_tabung'    => '5 : Tabung',
+                            'kondisi_masa_apar' => '6 : Masa Apar',
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 gap-2">
+                        @foreach($kondisiItems as $field => $label)
+                        <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-3 py-2">
+                            <span class="text-sm font-medium text-gray-700">{{ $label }}</span>
+                            <div class="flex items-center gap-3">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="{{ $field }}" value="OK"
+                                           class="accent-green-600"
+                                           {{ old($field, 'OK') === 'OK' ? 'checked' : '' }}>
+                                    <span class="text-xs font-semibold text-green-700">✓ OK</span>
+                                </label>
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="{{ $field }}" value="NOT OK"
+                                           class="accent-red-500"
+                                           {{ old($field) === 'NOT OK' ? 'checked' : '' }}>
+                                    <span class="text-xs font-semibold text-red-600">✗ NOT OK</span>
+                                </label>
+                            </div>
+                            @error($field)
+                                <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-gray-600 font-medium">Catatan</label>
+                        <textarea name="notes" rows="2" placeholder="Catatan tambahan (opsional)"
+                                  class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 resize-none">{{ old('notes') }}</textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold py-2 rounded-lg transition">
+                        + Simpan Pemeriksaan
+                    </button>
+                </form>
+            </div>
+            @endauth
+
+            {{-- Daftar riwayat pemeriksaan berkala --}}
+            <div class="p-5">
+                @if($apar->inspections->isEmpty())
+                    <div class="text-center py-6">
+                        <span class="text-3xl">📋</span>
+                        <p class="text-gray-500 text-sm mt-2">Belum ada riwayat pemeriksaan berkala.</p>
+                    </div>
+                @else
+                    <div class="space-y-3">
+                        @foreach($apar->inspections as $inspection)
+                        @php
+                            $allOk = $inspection->isAllOk();
+                        @endphp
+                        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                            {{-- Header row --}}
+                            <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full
+                                        {{ $allOk ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                        {{ $allOk ? '✓ Semua OK' : '✗ Ada Masalah' }}
+                                    </span>
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        {{ $inspection->inspected_at->format('d M Y H:i') }}
+                                    </span>
+                                </div>
+                                @auth
+                                <form action="{{ route('apar.inspection.destroy', $inspection->id) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Hapus record pemeriksaan ini?')"
+                                      class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-600 transition" title="Hapus">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                                @endauth
+                            </div>
+
+                            {{-- Kondisi grid --}}
+                            @php
+                                $kondisiList = [
+                                    '1 Handle'    => $inspection->kondisi_handle,
+                                    '2 Selang'    => $inspection->kondisi_selang,
+                                    '3 Pin Kunci' => $inspection->kondisi_pin_kunci,
+                                    '4 Indikator' => $inspection->kondisi_indikator,
+                                    '5 Tabung'    => $inspection->kondisi_tabung,
+                                    '6 Masa Apar' => $inspection->kondisi_masa_apar,
+                                ];
+                            @endphp
+                            <div class="grid grid-cols-3 gap-1">
+                                @foreach($kondisiList as $name => $val)
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs {{ $val === 'OK' ? 'text-green-600' : 'text-red-500' }} font-bold">
+                                        {{ $val === 'OK' ? '✓' : '✗' }}
+                                    </span>
+                                    <span class="text-xs text-gray-600">{{ $name }}</span>
+                                </div>
+                                @endforeach
+                            </div>
+
+                            @if($inspection->notes)
+                            <p class="text-xs text-gray-500 mt-1.5 italic">{{ $inspection->notes }}</p>
+                            @endif
+
+                            @if($inspection->inspector)
+                            <p class="text-xs text-gray-400 mt-1">Diperiksa oleh: {{ $inspection->inspector->username }}</p>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
         {{-- Maintenance History --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mt-4">
             <div class="bg-green-700 px-6 py-3 text-white flex items-center justify-between">
@@ -134,11 +327,6 @@
             {{-- Form tambah maintenance (hanya untuk admin yang login) --}}
             @auth
             <div class="p-5 border-b border-gray-100 bg-green-50">
-                @if(session('success'))
-                    <div class="mb-3 bg-green-100 border border-green-300 text-green-800 text-sm rounded-lg px-4 py-2">
-                        {{ session('success') }}
-                    </div>
-                @endif
                 <p class="text-xs text-green-800 font-semibold uppercase tracking-wide mb-3">Tambah Record Maintenance</p>
                 <form action="{{ route('apar.maintenance.store', $apar->code) }}" method="POST" class="space-y-3">
                     @csrf

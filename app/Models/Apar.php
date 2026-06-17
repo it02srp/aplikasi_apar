@@ -23,15 +23,19 @@ class Apar extends Model
         'condition',
         'responsible_person',
         'notes',
+        'is_maintenance',
+        'maintenance_started_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'manufacture_date'     => 'date',
-            'expiry_date'          => 'date',
-            'last_inspection_date' => 'date',
-            'next_inspection_date' => 'date',
+            'manufacture_date'       => 'date',
+            'expiry_date'            => 'date',
+            'last_inspection_date'   => 'date',
+            'next_inspection_date'   => 'date',
+            'is_maintenance'         => 'boolean',
+            'maintenance_started_at' => 'datetime',
         ];
     }
 
@@ -71,6 +75,11 @@ class Apar extends Model
     public function latestMaintenance()
     {
         return $this->hasOne(AparMaintenance::class)->orderByDesc('maintenance_date')->orderByDesc('id');
+    }
+
+    public function inspections()
+    {
+        return $this->hasMany(AparInspection::class)->orderByDesc('inspected_at')->orderByDesc('id');
     }
 
     public static function generateCode(): string

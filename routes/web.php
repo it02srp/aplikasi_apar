@@ -41,6 +41,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/apar/{code}/maintenance', [AparController::class, 'storeMaintenance'])->name('apar.maintenance.store');
     Route::delete('/apar/maintenance/{id}', [AparController::class, 'destroyMaintenance'])->name('apar.maintenance.destroy');
 
+    // Pemeriksaan berkala (periodic inspection)
+    Route::get('/inspeksi', [AparController::class, 'inspectionIndex'])->name('apar.inspection.index');
+    Route::post('/inspeksi', [AparController::class, 'storeInspectionAdmin'])->name('apar.inspection.store.admin');
+    Route::post('/inspeksi/export', [AparController::class, 'exportInspection'])->name('apar.inspection.export');
+    Route::post('/apar/{code}/inspection', [AparController::class, 'storeInspection'])->name('apar.inspection.store');
+    Route::delete('/apar/inspection/{id}', [AparController::class, 'destroyInspection'])->name('apar.inspection.destroy');
+    Route::post('/apar/{code}/toggle-maintenance', [AparController::class, 'toggleMaintenance'])->name('apar.toggle-maintenance');
+
     // Superadmin only
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');

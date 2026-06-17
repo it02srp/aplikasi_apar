@@ -264,19 +264,26 @@
 
                         {{-- Status --}}
                         <td class="px-4 py-3 align-middle whitespace-nowrap">
-                            @if($apar->isExpired())
-                                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                    Kadaluarsa
-                                </span>
-                            @elseif($apar->isNearExpiry())
-                                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                                    Hampir Habis
-                                </span>
-                            @else
-                                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                    Baik
-                                </span>
-                            @endif
+                            <div class="flex flex-col gap-1">
+                                @if($apar->is_maintenance)
+                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                                        🔧 Maintenance
+                                    </span>
+                                @endif
+                                @if($apar->isExpired())
+                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                        Kadaluarsa
+                                    </span>
+                                @elseif($apar->isNearExpiry())
+                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+                                        Hampir Habis
+                                    </span>
+                                @else
+                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                        Baik
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         {{-- Aksi --}}

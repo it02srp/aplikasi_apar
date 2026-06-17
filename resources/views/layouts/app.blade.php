@@ -87,6 +87,19 @@
                 @endif
             </a>
 
+            <a href="{{ route('apar.inspection.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors
+                      {{ request()->routeIs('apar.inspection.*') ? 'bg-yellow-50 text-yellow-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span>Pemeriksaan Berkala</span>
+                @if(request()->routeIs('apar.inspection.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                @endif
+            </a>
+
             @if(auth()->user()->isSuperAdmin())
             <a href="{{ route('users.index') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors

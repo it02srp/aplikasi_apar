@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AparInspectionExport;
 use App\Exports\AparTemplateExport;
 use App\Imports\AparImport;
 use App\Models\Apar;
+use App\Models\AparInspection;
 use App\Models\AparMaintenance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -75,8 +77,161 @@ class AparController extends Controller
 
     public function show(string $code)
     {
-        $apar = Apar::where('code', $code)->with('maintenances.performer')->firstOrFail();
+        $apar = Apar::where('code', $code)
+            ->with(['maintenances.performer', 'inspections.inspector'])
+            ->firstOrFail();
         return view('apar.show', compact('apar'));
+    }
+
+    public function storeInspection(Request $request, string $code)
+    {
+        $apar = Apar::where('code', $code)->firstOrFail();
+
+        $validated = $request->validate([
+            'kondisi_handle'    => 'required|in:OK,NOT OK',
+            'kondisi_selang'    => 'required|in:OK,NOT OK',
+            'kondisi_pin_kunci' => 'required|in:OK,NOT OK',
+            'kondisi_indikator' => 'required|in:OK,NOT OK',
+            'kondisi_tabung'    => 'required|in:OK,NOT OK',
+            'kondisi_masa_apar' => 'required|in:OK,NOT OK',
+            'notes'             => 'nullable|string',
+        ]);
+
+        $now = Carbon::now();
+
+        AparInspection::create([
+            'apar_id'           => $apar->id,
+            'inspected_at'      => $now,
+            'inspected_by'      => Auth::id(),
+            'kondisi_handle'    => $validated['kondisi_handle'],
+            'kondisi_selang'    => $validated['kondisi_selang'],
+            'kondisi_pin_kunci' => $validated['kondisi_pin_kunci'],
+            'kondisi_indikator' => $validated['kondisi_indikator'],
+            'kondisi_tabung'    => $validated['kondisi_tabung'],
+            'kondisi_masa_apar' => $validated['kondisi_masa_apar'],
+            'notes'             => $validated['notes'] ?? null,
+        ]);
+
+        // Update last_inspection_date on the APAR
+        $apar->update(['last_inspection_date' => $now->toDateString()]);
+
+        return redirect()->route('apar.show', $code)
+            ->with('success', 'Pemeriksaan berkala berhasil disimpan.');
+    }
+
+    public function destroyInspection(int $id)
+    {
+        $inspection = AparInspection::findOrFail($id);
+        $code       = $inspection->apar->code;
+        $inspection->delete();
+
+        $from = request()->query('from');
+        if ($from === 'list') {
+            return redirect()->route('apar.inspection.index')
+                ->with('success', 'Record pemeriksaan berhasil dihapus.');
+        }
+
+        return redirect()->route('apar.show', $code)
+            ->with('success', 'Record pemeriksaan berhasil dihapus.');
+    }
+
+    public function inspectionIndex(Request $request)
+    {
+        $query = AparInspection::with(['apar', 'inspector'])
+            ->orderByDesc('inspected_at')
+            ->orderByDesc('id');
+
+        if ($search = $request->input('search')) {
+            $query->whereHas('apar', function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('inspected_at', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('inspected_at', '<=', $dateTo);
+        }
+
+        $inspections = $query->paginate(20)->withQueryString();
+        $aparList    = Apar::orderBy('code')->get(['id', 'code', 'location']);
+
+        return view('apar.inspection', compact('inspections', 'aparList'));
+    }
+
+    public function exportInspection(Request $request)
+    {
+        $codes = $request->input('codes', []);
+
+        if (empty($codes)) {
+            return redirect()->back()->with('error', 'Pilih minimal satu APAR untuk diexport.');
+        }
+
+        $filename = 'pemeriksaan_berkala_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new AparInspectionExport($codes), $filename);
+    }
+
+    public function storeInspectionAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'apar_code'         => 'required|exists:apars,code',
+            'kondisi_handle'    => 'required|in:OK,NOT OK',
+            'kondisi_selang'    => 'required|in:OK,NOT OK',
+            'kondisi_pin_kunci' => 'required|in:OK,NOT OK',
+            'kondisi_indikator' => 'required|in:OK,NOT OK',
+            'kondisi_tabung'    => 'required|in:OK,NOT OK',
+            'kondisi_masa_apar' => 'required|in:OK,NOT OK',
+            'notes'             => 'nullable|string',
+        ], [
+            'apar_code.required' => 'Pilih APAR terlebih dahulu.',
+            'apar_code.exists'   => 'APAR tidak ditemukan.',
+        ]);
+
+        $apar = Apar::where('code', $validated['apar_code'])->firstOrFail();
+        $now  = Carbon::now();
+
+        AparInspection::create([
+            'apar_id'           => $apar->id,
+            'inspected_at'      => $now,
+            'inspected_by'      => Auth::id(),
+            'kondisi_handle'    => $validated['kondisi_handle'],
+            'kondisi_selang'    => $validated['kondisi_selang'],
+            'kondisi_pin_kunci' => $validated['kondisi_pin_kunci'],
+            'kondisi_indikator' => $validated['kondisi_indikator'],
+            'kondisi_tabung'    => $validated['kondisi_tabung'],
+            'kondisi_masa_apar' => $validated['kondisi_masa_apar'],
+            'notes'             => $validated['notes'] ?? null,
+        ]);
+
+        $apar->update(['last_inspection_date' => $now->toDateString()]);
+
+        return redirect()->route('apar.inspection.index')
+            ->with('success', "Pemeriksaan {$apar->code} berhasil disimpan.");
+    }
+
+    public function toggleMaintenance(string $code)
+    {
+        $apar = Apar::where('code', $code)->firstOrFail();
+
+        if ($apar->is_maintenance) {
+            $apar->update([
+                'is_maintenance'         => false,
+                'maintenance_started_at' => null,
+            ]);
+            $msg = "APAR {$code} selesai maintenance.";
+        } else {
+            $apar->update([
+                'is_maintenance'         => true,
+                'maintenance_started_at' => Carbon::now(),
+            ]);
+            $msg = "APAR {$code} sedang dalam maintenance.";
+        }
+
+        return redirect()->route('apar.show', $code)->with('success', $msg);
     }
 
     public function storeMaintenanceAdmin(Request $request)
