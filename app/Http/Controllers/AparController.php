@@ -35,14 +35,16 @@ class AparController extends Controller
         }
 
         $apars = $query->orderBy('code')->paginate(15)->withQueryString();
+        $types = Apar::distinct()->orderBy('type')->pluck('type');
 
-        return view('apar.index', compact('apars'));
+        return view('apar.index', compact('apars', 'types'));
     }
 
     public function create()
     {
         $nextCode = Apar::generateCode();
-        return view('apar.create', compact('nextCode'));
+        $types = Apar::distinct()->orderBy('type')->pluck('type');
+        return view('apar.create', compact('nextCode', 'types'));
     }
 
     public function store(Request $request)
@@ -53,7 +55,7 @@ class AparController extends Controller
             'building'              => 'nullable|string|max:255',
             'floor'                 => 'nullable|string|max:100',
             'room'                  => 'nullable|string|max:100',
-            'type'                  => 'required|in:CO2,Dry Powder,Foam,Water,Clean Agent',
+            'type'                  => 'required|string|max:100',
             'capacity'              => 'required|numeric|min:0',
             'capacity_unit'         => 'required|in:kg,liter',
             'manufacture_date'      => 'required|date',
@@ -64,6 +66,8 @@ class AparController extends Controller
             'responsible_person'    => 'nullable|string|max:255',
             'notes'                 => 'nullable|string',
         ]);
+
+        $validated['type'] = ucwords(strtolower(trim($validated['type'])));
 
         if (empty($validated['code'])) {
             $validated['code'] = Apar::generateCode();
@@ -392,7 +396,8 @@ class AparController extends Controller
     public function edit(string $code)
     {
         $apar = Apar::where('code', $code)->firstOrFail();
-        return view('apar.edit', compact('apar'));
+        $types = Apar::distinct()->orderBy('type')->pluck('type');
+        return view('apar.edit', compact('apar', 'types'));
     }
 
     public function update(Request $request, string $code)
@@ -404,7 +409,7 @@ class AparController extends Controller
             'building'              => 'nullable|string|max:255',
             'floor'                 => 'nullable|string|max:100',
             'room'                  => 'nullable|string|max:100',
-            'type'                  => 'required|in:CO2,Dry Powder,Foam,Water,Clean Agent',
+            'type'                  => 'required|string|max:100',
             'capacity'              => 'required|numeric|min:0',
             'capacity_unit'         => 'required|in:kg,liter',
             'manufacture_date'      => 'required|date',
@@ -415,6 +420,8 @@ class AparController extends Controller
             'responsible_person'    => 'nullable|string|max:255',
             'notes'                 => 'nullable|string',
         ]);
+
+        $validated['type'] = ucwords(strtolower(trim($validated['type'])));
 
         $apar->update($validated);
 

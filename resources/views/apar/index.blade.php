@@ -165,7 +165,7 @@
                 class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white
                        focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent">
                 <option value="">Semua Jenis</option>
-                @foreach(['CO2','Dry Powder','Foam','Water','Clean Agent'] as $t)
+                @foreach($types as $t)
                     <option value="{{ $t }}" @selected(request('type') === $t)>{{ $t }}</option>
                 @endforeach
             </select>

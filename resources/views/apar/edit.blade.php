@@ -27,7 +27,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Jenis <span class="text-red-500">*</span></label>
                     <select name="type" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 @error('type') border-red-500 @enderror">
-                        @foreach(['CO2','Dry Powder','Foam','Water','Clean Agent'] as $t)
+                        @foreach($types as $t)
                             <option value="{{ $t }}" @selected(old('type', $apar->type) === $t)>{{ $t }}</option>
                         @endforeach
                     </select>

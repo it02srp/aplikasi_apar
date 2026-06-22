@@ -16,7 +16,6 @@ class AparImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
     public int $skipped  = 0;
     public array $errors = [];
 
-    private array $validTypes      = ['CO2', 'Dry Powder', 'Foam', 'Water', 'Clean Agent'];
     private array $validUnits      = ['kg', 'liter'];
     private array $validConditions = ['Good', 'Needs Attention', 'Replace'];
 
@@ -45,11 +44,6 @@ class AparImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                 }
 
                 // Validasi nilai enum
-                if (!in_array($data['type'], $this->validTypes)) {
-                    $this->errors[] = "Baris {$line}: Jenis '{$data['type']}' tidak valid.";
-                    $this->skipped++;
-                    continue;
-                }
                 if (!in_array($data['capacity_unit'], $this->validUnits)) {
                     $this->errors[] = "Baris {$line}: Satuan '{$data['capacity_unit']}' tidak valid (kg/liter).";
                     $this->skipped++;
@@ -91,7 +85,7 @@ class AparImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             'building'             => trim($row['gedung'] ?? '') ?: null,
             'floor'                => trim($row['lantai'] ?? '') ?: null,
             'room'                 => trim($row['ruangan'] ?? '') ?: null,
-            'type'                 => trim($row['jenis'] ?? ''),
+            'type'                 => ucwords(strtolower(trim($row['jenis'] ?? ''))),
             'capacity'             => is_numeric($row['kapasitas'] ?? '') ? (float)$row['kapasitas'] : null,
             'capacity_unit'        => strtolower(trim($row['satuan'] ?? '')),
             'manufacture_date'     => $this->parseDate($row['tanggal_produksi'] ?? null),

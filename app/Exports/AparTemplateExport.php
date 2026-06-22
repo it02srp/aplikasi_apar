@@ -151,7 +151,7 @@ class AparPanduanSheet implements FromArray, WithStyles, WithColumnWidths, WithT
             ['Gedung',             'Nama gedung (opsional)',                              'Gedung A'],
             ['Lantai',             'Nomor lantai (opsional)',                             '1, 2, Basement'],
             ['Ruangan',            'Nama ruangan spesifik (opsional)',                    'Ruang Server'],
-            ['Jenis *',            'Jenis media pemadam (wajib diisi)',                   'CO2 | Dry Powder | Foam | Water | Clean Agent'],
+            ['Jenis *',            'Jenis media pemadam (wajib diisi), jenis baru otomatis ditambahkan', 'Co2 | Dry Powder | Foam | Water | Clean Agent'],
             ['Kapasitas *',        'Angka kapasitas saja, tanpa satuan (wajib diisi)',    '6'],
             ['Satuan *',           'Satuan kapasitas (wajib diisi)',                      'kg | liter'],
             ['Tanggal Produksi *', 'Format: DD/MM/YYYY (wajib diisi)',                    '01/01/2023'],
