@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/apar/{code}/print', [AparController::class, 'print'])->name('apar.print');
     Route::get('/apar/import/template', [AparController::class, 'downloadTemplate'])->name('apar.template');
     Route::post('/apar/import', [AparController::class, 'import'])->name('apar.import');
+    Route::get('/apar/export/data', [AparController::class, 'exportData'])->name('apar.export');
     Route::delete('/apar/{code}', [AparController::class, 'destroy'])->name('apar.destroy');
 
     // Maintenance history

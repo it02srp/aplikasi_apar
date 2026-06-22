@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AparDataExport;
 use App\Exports\AparInspectionExport;
 use App\Exports\AparTemplateExport;
 use App\Imports\AparImport;
@@ -436,6 +437,12 @@ class AparController extends Controller
 
         return redirect()->route('apar.index')
             ->with('success', "APAR {$code} berhasil dihapus.");
+    }
+
+    public function exportData()
+    {
+        $filename = 'data_apar_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new AparDataExport(), $filename);
     }
 
     public function downloadTemplate()
