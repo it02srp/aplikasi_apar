@@ -47,9 +47,12 @@
             }
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 320px);
+                grid-template-columns: repeat(3, 226px);
                 gap: 16px;
                 justify-content: center;
+            }
+            .label-card {
+                box-shadow: 0 4px 20px rgba(0,0,0,0.12);
             }
         }
 
@@ -60,35 +63,34 @@
 
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 8.5cm);
+                grid-template-columns: repeat(3, 6cm);
                 gap: 0.5cm;
                 width: fit-content;
                 margin: 0 auto;
             }
 
             .label-wrapper {
-                width: 8.5cm;
+                width: 6cm;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
             .label-card {
-                width: 8.5cm !important;
+                width: 6cm !important;
                 height: auto !important;
-                min-height: 5.8cm !important;
                 border: 1.5px solid #16a34a !important;
                 border-radius: 4px !important;
                 box-shadow: none !important;
                 overflow: visible !important;
             }
 
-            .label-top { padding: 4px 8px 3px !important; gap: 6px !important; }
-            .label-logo { height: 8mm !important; }
-            .label-company { font-size: 8pt !important; }
-            .label-qr { padding: 3px 4px !important; }
-            .label-qr canvas, .label-qr img { width: 3.2cm !important; height: 3.2cm !important; }
-            .label-footer { font-size: 10pt !important; padding: 3px 8px 1px !important; }
-            .label-location { font-size: 7pt !important; padding: 1px 8px 4px !important; }
+            .label-top { padding: 5px 6px 4px !important; gap: 5px !important; }
+            .label-logo { height: 7mm !important; }
+            .label-company { font-size: 7pt !important; }
+            .label-qr { padding: 6px 4px !important; }
+            .label-qr canvas, .label-qr img { width: 4.6cm !important; height: 4.6cm !important; }
+            .label-footer { font-size: 10pt !important; padding: 4px 6px 2px !important; }
+            .label-location { font-size: 7pt !important; padding: 1px 6px 5px !important; }
         }
 
         /* ── Shared ── */
@@ -114,13 +116,13 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            padding: 10px 12px 8px;
+            padding: 10px 10px 8px;
             border-bottom: 2px solid #16a34a;
-            gap: 8px;
+            gap: 7px;
         }
 
         .label-logo {
-            height: 36px;
+            height: 32px;
             width: auto;
             display: block;
             flex-shrink: 0;
@@ -129,10 +131,10 @@
         .label-company {
             font-family: Arial, sans-serif;
             font-weight: 900;
-            font-size: 11px;
+            font-size: 10px;
             color: #16a34a;
             text-align: left;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
             text-transform: uppercase;
             line-height: 1.3;
         }
@@ -142,7 +144,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 10px 8px;
         }
 
         .label-footer {
@@ -151,7 +153,7 @@
             padding: 5px 8px 2px;
             font-family: Arial, sans-serif;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 15px;
             color: #111;
             border-top: 1.5px solid #16a34a;
         }
@@ -159,9 +161,9 @@
         .label-location {
             width: 100%;
             text-align: center;
-            padding: 1px 8px 8px;
+            padding: 2px 8px 9px;
             font-family: Arial, sans-serif;
-            font-size: 10px;
+            font-size: 9px;
             color: #444;
             font-weight: 500;
         }
@@ -197,8 +199,8 @@
         @foreach($apars as $i => $apar)
         new QRCode(document.getElementById("qr-{{ $i }}"), {
             text: "{{ url('/apar/' . $apar->code) }}",
-            width: 160,
-            height: 160,
+            width: 175,
+            height: 175,
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
