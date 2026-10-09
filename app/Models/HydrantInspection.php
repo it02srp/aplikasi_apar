@@ -31,7 +31,7 @@ class HydrantInspection extends Model
     ];
 
     protected $casts = [
-        'inspected_at' => 'date',
+        'inspected_at' => 'datetime',
     ];
 
     public function isAllOk(): bool

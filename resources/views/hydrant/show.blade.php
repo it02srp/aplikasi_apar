@@ -17,10 +17,6 @@
         <span class="text-4xl">🚒</span>
         <h1 class="text-xl font-bold text-gray-800 mt-1">Hydrant Management</h1>
         <p class="text-gray-500 text-sm">PT Sinar Rimba Pasifik</p>
-        <div class="mt-2 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-1 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            <span id="realtime-clock" class="text-sm font-mono font-semibold text-gray-700"></span>
-        </div>
     </div>
 
     {{-- Status Badge --}}
@@ -122,6 +118,7 @@
                             {{ $latest ? $latest->inspected_at->format('d M Y') : '-' }}
                         </p>
                         @if($latest)
+                        <p class="text-xs font-semibold text-blue-600">{{ $latest->inspected_at->format('H:i') }} WIB</p>
                         <p class="text-xs text-gray-400">{{ $latest->inspected_at->diffForHumans() }}</p>
                         @endif
                     </div>
@@ -167,17 +164,13 @@
             <div id="form-inspeksi" class="hidden p-5 bg-green-50 border-t border-green-100">
                 <form action="{{ route('hydrant.inspeksi.store', $hydrant->code) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                     @csrf
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-gray-600 font-medium">Periode *</label>
-                            <input type="month" name="periode" required value="{{ old('periode', date('Y-m')) }}"
-                                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-600 font-medium">Tanggal *</label>
-                            <input type="date" name="inspected_at" required value="{{ old('inspected_at', date('Y-m-d')) }}"
-                                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500">
-                        </div>
+                    <div>
+                        <label class="text-xs text-gray-600 font-medium">Periode *</label>
+                        <input type="month" name="periode" required value="{{ old('periode', date('Y-m')) }}"
+                               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-xs text-blue-700">
+                        📅 Tanggal &amp; jam diambil otomatis saat disimpan.
                     </div>
                     @php
                     $items = [
@@ -268,6 +261,7 @@
                                 {{ $ins->isAllOk() ? '✓ Semua OK' : '✗ Ada Masalah' }}
                             </span>
                             <span class="text-xs text-gray-500">{{ $ins->inspected_at->format('d M Y') }}</span>
+                            <span class="text-xs font-semibold text-blue-600">{{ $ins->inspected_at->format('H:i') }} WIB</span>
                         </div>
                         @auth
                         <form action="{{ route('hydrant.inspeksi.destroy', $ins->id) }}" method="POST" onsubmit="return confirm('Hapus?')" class="inline">
@@ -468,26 +462,6 @@
 </div>
 
 <script>
-// ── Real-time clock ───────────────────────────────────────────────────────────
-(function tickClock() {
-    const el = document.getElementById('realtime-clock');
-    function update() {
-        const now = new Date();
-        const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-        const d = days[now.getDay()];
-        const dd = String(now.getDate()).padStart(2,'0');
-        const mo = months[now.getMonth()];
-        const yyyy = now.getFullYear();
-        const hh = String(now.getHours()).padStart(2,'0');
-        const mm = String(now.getMinutes()).padStart(2,'0');
-        const ss = String(now.getSeconds()).padStart(2,'0');
-        el.textContent = `${d}, ${dd} ${mo} ${yyyy}  ${hh}:${mm}:${ss}`;
-    }
-    update();
-    setInterval(update, 1000);
-})();
-
 function switchTab(tab) {
     ['info','inspeksi','maintenance'].forEach(t => {
         document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);

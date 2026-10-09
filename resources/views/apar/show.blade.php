@@ -16,10 +16,6 @@
             <span class="text-4xl">🔥</span>
             <h1 class="text-xl font-bold text-gray-800 mt-1">APAR Management</h1>
             <p class="text-gray-500 text-sm">PT Sinar Rimba Pasifik</p>
-            <div class="mt-2 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-1 shadow-sm">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                <span id="realtime-clock" class="text-sm font-mono font-semibold text-gray-700"></span>
-            </div>
         </div>
 
         {{-- Status Badge --}}
@@ -158,7 +154,15 @@
 
                     @if($apar->last_inspection_date || $apar->next_inspection_date)
                     <div class="border-t border-gray-100 pt-3 grid grid-cols-2 gap-3">
-                        @if($apar->last_inspection_date)
+                        @if($apar->inspections->isNotEmpty())
+                        @php $latestInsp = $apar->inspections->first(); @endphp
+                        <div>
+                            <p class="text-xs text-gray-400 font-medium">Inspeksi Terakhir</p>
+                            <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $latestInsp->inspected_at->format('d M Y') }}</p>
+                            <p class="text-xs font-semibold text-blue-600">{{ $latestInsp->inspected_at->format('H:i') }} WIB</p>
+                            <p class="text-xs text-gray-400">{{ $latestInsp->inspected_at->diffForHumans() }}</p>
+                        </div>
+                        @elseif($apar->last_inspection_date)
                         <div>
                             <p class="text-xs text-gray-400 font-medium">Inspeksi Terakhir</p>
                             <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $apar->last_inspection_date->format('d M Y') }}</p>
@@ -299,6 +303,9 @@
                                 </span>
                                 <span class="text-xs text-gray-500">
                                     {{ $inspection->inspected_at->format('d M Y') }}
+                                </span>
+                                <span class="text-xs font-semibold text-blue-600">
+                                    {{ $inspection->inspected_at->format('H:i') }} WIB
                                 </span>
                             </div>
                             @auth
@@ -532,26 +539,6 @@
 </div>
 
 <script>
-// ── Real-time clock ───────────────────────────────────────────────────────────
-(function tickClock() {
-    const el = document.getElementById('realtime-clock');
-    function update() {
-        const now = new Date();
-        const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-        const d = days[now.getDay()];
-        const dd = String(now.getDate()).padStart(2,'0');
-        const mo = months[now.getMonth()];
-        const yyyy = now.getFullYear();
-        const hh = String(now.getHours()).padStart(2,'0');
-        const mm = String(now.getMinutes()).padStart(2,'0');
-        const ss = String(now.getSeconds()).padStart(2,'0');
-        el.textContent = `${d}, ${dd} ${mo} ${yyyy}  ${hh}:${mm}:${ss}`;
-    }
-    update();
-    setInterval(update, 1000);
-})();
-
 // ── Tab switching ─────────────────────────────────────────────────────────────
 function switchTab(tab) {
     ['info','inspeksi','maintenance'].forEach(t => {

@@ -6,6 +6,7 @@ use App\Models\Hydrant;
 use App\Models\HydrantInspection;
 use App\Models\HydrantMaintenance;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -141,7 +142,7 @@ class HydrantController extends Controller
     {
         $validated = $request->validate([
             'periode'             => 'required|date_format:Y-m',
-            'inspected_at'        => 'required|date',
+            'inspected_at'        => 'nullable|date',
             'item_01_kondisi_box' => 'required|in:OK,NOT OK',
             'item_02_akses_bebas' => 'required|in:OK,NOT OK',
             'item_03_nozzle'      => 'required|in:OK,NOT OK',
@@ -170,6 +171,7 @@ class HydrantController extends Controller
 
         $validated['hydrant_id']   = $hydrant->id;
         $validated['inspected_by'] = Auth::id();
+        $validated['inspected_at'] = Carbon::now();
         $validated['photo']        = $request->file('photo')->store('photos/hydrant/inspeksi', 'public');
 
         $inspection = HydrantInspection::create($validated);
