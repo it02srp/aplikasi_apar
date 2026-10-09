@@ -118,7 +118,6 @@
                             {{ $latest ? $latest->inspected_at->format('d M Y') : '-' }}
                         </p>
                         @if($latest)
-                        <p class="text-xs font-semibold text-blue-600">{{ $latest->inspected_at->format('H:i') }} WIB</p>
                         <p class="text-xs text-gray-400">{{ $latest->inspected_at->diffForHumans() }}</p>
                         @endif
                     </div>
