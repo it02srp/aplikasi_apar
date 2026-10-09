@@ -111,6 +111,16 @@
                 </div>
 
                 {{-- Inspeksi & Maintenance terakhir --}}
+                @php
+                    $nextInspDate = $latest
+                        ? \Carbon\Carbon::createFromFormat('Y-m', $latest->periode)->addMonth()
+                        : null;
+                    if ($nextInspDate) {
+                        $daysLeft  = now()->startOfDay()->diffInDays($nextInspDate->startOfDay(), false);
+                        $nextColor = $daysLeft < 0 ? 'text-red-600' : ($daysLeft <= 14 ? 'text-yellow-600' : 'text-green-700');
+                        $nextLabel = $daysLeft < 0 ? 'Terlambat ' . abs($daysLeft) . ' hari' : ($daysLeft === 0 ? 'Hari ini' : $daysLeft . ' hari lagi');
+                    }
+                @endphp
                 <div class="border-t border-gray-100 pt-3 grid grid-cols-2 gap-3">
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Inspeksi Terakhir</p>
@@ -119,11 +129,20 @@
                         </p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 font-medium">Maintenance Terakhir</p>
-                        <p class="text-sm font-semibold text-gray-800 mt-0.5">
-                            {{ $latestMt ? $latestMt->maintenance_date->format('d M Y') : '-' }}
-                        </p>
+                        <p class="text-xs text-gray-400 font-medium">Inspeksi Berikutnya</p>
+                        @if($nextInspDate)
+                        <p class="text-sm font-semibold {{ $nextColor }} mt-0.5">{{ $nextInspDate->format('M Y') }}</p>
+                        <p class="text-xs {{ $nextColor }}">{{ $nextLabel }}</p>
+                        @else
+                        <p class="text-sm font-semibold text-gray-400 mt-0.5">-</p>
+                        @endif
                     </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <p class="text-xs text-gray-400 font-medium">Maintenance Terakhir</p>
+                    <p class="text-sm font-semibold text-gray-800 mt-0.5">
+                        {{ $latestMt ? $latestMt->maintenance_date->format('d M Y') : '-' }}
+                    </p>
                 </div>
 
                 @if($hydrant->notes)

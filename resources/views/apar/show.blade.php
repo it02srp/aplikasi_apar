@@ -167,9 +167,15 @@
                         </div>
                         @endif
                         @if($apar->next_inspection_date)
+                        @php
+                            $daysLeft = now()->startOfDay()->diffInDays($apar->next_inspection_date->startOfDay(), false);
+                            $nextColor = $daysLeft < 0 ? 'text-red-600' : ($daysLeft <= 30 ? 'text-yellow-600' : 'text-green-700');
+                            $nextLabel = $daysLeft < 0 ? 'Terlambat ' . abs($daysLeft) . ' hari' : ($daysLeft === 0 ? 'Hari ini' : $daysLeft . ' hari lagi');
+                        @endphp
                         <div>
                             <p class="text-xs text-gray-400 font-medium">Inspeksi Berikutnya</p>
-                            <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $apar->next_inspection_date->format('d M Y') }}</p>
+                            <p class="text-sm font-semibold {{ $nextColor }} mt-0.5">{{ $apar->next_inspection_date->format('d M Y') }}</p>
+                            <p class="text-xs {{ $nextColor }}">{{ $nextLabel }}</p>
                         </div>
                         @endif
                     </div>
