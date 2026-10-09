@@ -107,7 +107,7 @@
                            class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
                            onchange="previewPhotoAdmin(this, 'preview-hyd-insp')">
                     <img id="preview-hyd-insp" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
-                    @error('photo') <p class="text-xs text-red-500 mt-0.5">{{  }}</p> @enderror
+                    @error('photo') <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="flex gap-3 pt-2">
