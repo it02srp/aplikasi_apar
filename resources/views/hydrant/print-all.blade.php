@@ -8,10 +8,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         @page {
-            size: A4;
-            margin: 1cm;
+            size: A4 portrait;
+            margin: 0.8cm;
         }
 
+        /* ── Screen ── */
         @media screen {
             body {
                 background: #e5e7eb;
@@ -28,7 +29,7 @@
             .btn-print {
                 background: #1d4ed8;
                 color: white;
-                padding: 9px 20px;
+                padding: 10px 24px;
                 border: none;
                 border-radius: 8px;
                 font-size: 14px;
@@ -38,7 +39,7 @@
             .btn-back {
                 background: white;
                 color: #374151;
-                padding: 9px 20px;
+                padding: 10px 24px;
                 border: 1.5px solid #d1d5db;
                 border-radius: 8px;
                 font-size: 14px;
@@ -47,16 +48,17 @@
             }
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 14px;
-                max-width: 760px;
-                margin: 0 auto;
+                grid-template-columns: repeat(2, 320px);
+                gap: 16px;
+                justify-content: center;
             }
             .label-card {
-                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+                height: 226px; /* proporsi 8.5:6 */
             }
         }
 
+        /* ── Print ── */
         @media print {
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             body { background: #fff; margin: 0; padding: 0; }
@@ -64,57 +66,56 @@
 
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 4.5cm);
-                gap: 0.4cm;
+                grid-template-columns: repeat(2, 8.5cm);
+                gap: 0.5cm;
                 width: fit-content;
                 margin: 0 auto;
             }
 
             .label-wrapper {
-                width: 4.5cm;
+                width: 8.5cm;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
             .label-card {
-                width: 4.5cm !important;
-                height: auto !important;
-                border: 1px solid #16a34a !important;
+                width: 8.5cm !important;
+                height: 6cm !important;
+                border: 1.5px solid #16a34a !important;
                 border-radius: 4px !important;
                 box-shadow: none !important;
             }
 
-            .label-logo {
-                height: 5mm !important;
-            }
+            .label-logo { height: 9mm !important; }
 
             .label-top {
-                padding: 4px 4px 3px !important;
-                gap: 2px !important;
+                padding: 5px 8px 4px !important;
+                gap: 3px !important;
+            }
+
+            .label-company {
+                font-size: 8.5pt !important;
+                letter-spacing: 0.5px !important;
             }
 
             .label-qr {
-                padding: 4px !important;
+                padding: 2px !important;
             }
 
             .label-qr canvas,
             .label-qr img {
-                width: 3.2cm !important;
-                height: 3.2cm !important;
-            }
-
-            .label-company {
-                font-size: 6.5pt !important;
+                width: 3.8cm !important;
+                height: 3.8cm !important;
             }
 
             .label-footer {
-                font-size: 8.5pt !important;
-                padding: 3px 4px 1px !important;
+                font-size: 11pt !important;
+                padding: 3px 8px 2px !important;
             }
 
             .label-location {
-                font-size: 6pt !important;
-                padding: 0 4px 4px !important;
+                font-size: 7.5pt !important;
+                padding: 0 8px 5px !important;
             }
         }
 
@@ -128,8 +129,8 @@
         .label-card {
             width: 100%;
             background: white;
-            border: 1.5px solid #16a34a;
-            border-radius: 8px;
+            border: 2px solid #16a34a;
+            border-radius: 10px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -139,28 +140,30 @@
         .label-top {
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            padding: 8px 6px 4px;
-            border-bottom: 1.5px solid #16a34a;
-            gap: 3px;
+            justify-content: center;
+            padding: 10px 12px 8px;
+            border-bottom: 2px solid #16a34a;
+            gap: 8px;
         }
 
         .label-logo {
-            height: 22px;
+            height: 36px;
             width: auto;
             display: block;
+            flex-shrink: 0;
         }
 
         .label-company {
             font-family: Arial, sans-serif;
-            font-weight: 800;
-            font-size: 8px;
+            font-weight: 900;
+            font-size: 11px;
             color: #16a34a;
-            text-align: center;
-            letter-spacing: 0.2px;
+            text-align: left;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
-            line-height: 1.2;
+            line-height: 1.3;
         }
 
         .label-qr {
@@ -174,21 +177,21 @@
         .label-footer {
             width: 100%;
             text-align: center;
-            padding: 4px 4px 2px;
+            padding: 5px 8px 2px;
             font-family: Arial, sans-serif;
-            font-weight: 800;
-            font-size: 13px;
+            font-weight: 900;
+            font-size: 16px;
             color: #111;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1.5px solid #16a34a;
         }
 
         .label-location {
             width: 100%;
             text-align: center;
-            padding: 0 4px 6px;
+            padding: 0 8px 7px;
             font-family: Arial, sans-serif;
-            font-size: 8px;
-            color: #555;
+            font-size: 10px;
+            color: #444;
             font-weight: 500;
         }
     </style>
@@ -207,7 +210,7 @@
                 <div class="label-top">
                     <img src="{{ asset('logo_SRP.png') }}" class="label-logo" alt="SRP"
                          onerror="this.style.display='none'">
-                    <div class="label-company">PT. SINAR RIMBA PASIFIK</div>
+                    <div class="label-company">PT. SINAR<br>RIMBA PASIFIK</div>
                 </div>
                 <div class="label-qr">
                     <div id="qr-{{ $i }}"></div>
@@ -223,11 +226,11 @@
         @foreach($hydrants as $i => $hydrant)
         new QRCode(document.getElementById("qr-{{ $i }}"), {
             text: "{{ url('/hydrant/' . $hydrant->code) }}",
-            width: 110,
-            height: 110,
+            width: 160,
+            height: 160,
             colorDark: "#000000",
             colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
+            correctLevel: QRCode.CorrectLevel.H
         });
         @endforeach
     </script>
