@@ -160,7 +160,6 @@
                             <p class="text-xs text-gray-400 font-medium">Inspeksi Terakhir</p>
                             <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $latestInsp->inspected_at->format('d M Y') }}</p>
                             <p class="text-xs font-semibold text-blue-600">{{ $latestInsp->inspected_at->format('H:i') }} WIB</p>
-                            <p class="text-xs text-gray-400">{{ $latestInsp->inspected_at->diffForHumans() }}</p>
                         </div>
                         @elseif($apar->last_inspection_date)
                         <div>

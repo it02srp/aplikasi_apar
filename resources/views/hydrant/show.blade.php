@@ -117,8 +117,6 @@
                         <p class="text-sm font-semibold text-gray-800 mt-0.5">
                             {{ $latest ? $latest->inspected_at->format('d M Y') : '-' }}
                         </p>
-                        @if($latest)
-                        <p class="text-xs text-gray-400">{{ $latest->inspected_at->diffForHumans() }}</p>
                         @endif
                     </div>
                     <div>
@@ -127,7 +125,6 @@
                             {{ $latestMt ? $latestMt->maintenance_date->format('d M Y') : '-' }}
                         </p>
                         @if($latestMt)
-                        <p class="text-xs text-gray-400">{{ $latestMt->maintenance_date->diffForHumans() }}</p>
                         @endif
                     </div>
                 </div>
