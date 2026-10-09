@@ -8,11 +8,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         @page {
-            size: 10cm auto;
-            margin: 0;
+            size: A4;
+            margin: 1cm;
         }
 
-        /* ── Screen preview ── */
         @media screen {
             body {
                 background: #e5e7eb;
@@ -48,91 +47,58 @@
             }
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(3, 148px);
-                gap: 12px;
-                justify-content: center;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+                max-width: 760px;
+                margin: 0 auto;
             }
             .label-card {
                 box-shadow: 0 4px 16px rgba(0,0,0,0.12);
             }
         }
 
-        /* ── Print — Zebra GT800, lebar kertas 10cm ── */
         @media print {
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
             body { background: #fff; margin: 0; padding: 0; }
-
             .actions { display: none !important; }
 
             .label-grid {
                 display: grid;
-                grid-template-columns: repeat(3, 3cm);
-                gap: 0.3cm;
+                grid-template-columns: repeat(4, 4.5cm);
+                gap: 0.4cm;
                 width: fit-content;
-                margin: 0 0.28cm;
+                margin: 0 auto;
             }
 
             .label-wrapper {
-                width: 3cm;
-                height: 4cm;
-                padding: 0;
+                width: 4.5cm;
+                height: 5.5cm;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
             .label-card {
-                width: 3cm;
-                height: 4cm;
-                border: 0.5px solid #ccc !important;
-                border-radius: 0 !important;
+                width: 4.5cm !important;
+                height: 5.5cm !important;
+                border: 1px solid #16a34a !important;
+                border-radius: 4px !important;
                 box-shadow: none !important;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                overflow: hidden;
             }
 
-            .label-header {
-                background: #000 !important;
-                color: #fff !important;
-                font-size: 5pt !important;
-                padding: 2px 3px !important;
-                width: 100% !important;
-                text-align: center !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.3px !important;
-                flex-shrink: 0 !important;
-            }
+            .label-logo { height: 6mm !important; }
 
-            .label-qr {
-                flex: 1 !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                padding: 0.3cm 0 0.15cm 0 !important;  /* ubah nilai top (0.05cm) untuk jarak dari header */
-                width: 100% !important;
-            }
+            .label-company { font-size: 7pt !important; }
 
             .label-qr canvas,
             .label-qr img {
-                width: 2.55cm !important;
-                height: 2.55cm !important;
+                width: 3.5cm !important;
+                height: 3.5cm !important;
             }
 
-            .label-footer {
-                font-size: 8pt !important;
-                font-weight: 700 !important;
-                color: #000 !important;
-                text-align: center !important;
-                padding: 0 0.1cm 1.5cm !important;
-                letter-spacing: 0 !important;
-                width: 100% !important;
-            }
+            .label-footer { font-size: 9pt !important; }
         }
 
-        /* ── Shared (screen + print base) ── */
+        /* ── Shared ── */
         .label-wrapper {
             display: flex;
             align-items: stretch;
@@ -142,35 +108,39 @@
         .label-card {
             width: 100%;
             background: white;
-            border: 1px solid #374151;
-            border-radius: 6px;
+            border: 1.5px solid #16a34a;
+            border-radius: 8px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .label-header {
-            background: #000;
-            color: #fff;
-            text-align: center;
-            padding: 3px 4px;
-            font-family: Arial, sans-serif;
-            font-weight: 800;
-            font-size: 9px;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
+        .label-top {
             width: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            padding: 8px 6px 4px;
+            border-bottom: 1.5px solid #16a34a;
             gap: 3px;
         }
 
         .label-logo {
-            height: 11px;
+            height: 22px;
             width: auto;
             display: block;
+        }
+
+        .label-company {
+            font-family: Arial, sans-serif;
+            font-weight: 800;
+            font-size: 8px;
+            color: #16a34a;
+            text-align: center;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+            line-height: 1.2;
         }
 
         .label-qr {
@@ -178,18 +148,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: white;
             padding: 6px;
         }
 
         .label-footer {
-            text-align: center;
-            padding: 4px 4px 6px;
-            font-family: Arial, sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            color: #000;
             width: 100%;
+            text-align: center;
+            padding: 4px 4px 7px;
+            font-family: Arial, sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            color: #111;
+            border-top: 1px solid #e5e7eb;
         }
     </style>
 </head>
@@ -204,9 +174,10 @@
         @foreach($apars as $i => $apar)
         <div class="label-wrapper">
             <div class="label-card">
-                <div class="label-header">
-                    <img src="{{ asset('logo_SRP.png') }}" class="label-logo" alt="SRP">
-                    PT. SINAR RIMBA PASIFIK
+                <div class="label-top">
+                    <img src="{{ asset('logo_SRP.png') }}" class="label-logo" alt="SRP"
+                         onerror="this.style.display='none'">
+                    <div class="label-company">PT. SINAR RIMBA PASIFIK</div>
                 </div>
                 <div class="label-qr">
                     <div id="qr-{{ $i }}"></div>
@@ -221,8 +192,8 @@
         @foreach($apars as $i => $apar)
         new QRCode(document.getElementById("qr-{{ $i }}"), {
             text: "{{ url('/apar/' . $apar->code) }}",
-            width: 83,
-            height: 83,
+            width: 110,
+            height: 110,
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.M
