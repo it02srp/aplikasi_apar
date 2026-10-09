@@ -4,9 +4,15 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
     <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <h2 class="text-lg font-semibold text-gray-800">Daftar Hydrant</h2>
-        <a href="{{ route('hydrant.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            + Tambah Hydrant
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ route('hydrant.print-all') }}" target="_blank" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                Print QR Semua
+            </a>
+            <a href="{{ route('hydrant.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                + Tambah Hydrant
+            </a>
+        </div>
     </div>
     
     <div class="p-4 sm:p-6 bg-gray-50 border-b border-gray-200">
@@ -53,8 +59,8 @@
                     </td>
                     <td class="p-4">
                         <div class="flex gap-2">
-                            <a href="{{ route('hydrant.show', $h->code) }}" class="text-blue-600 hover:text-blue-800" title="Detail">Lihat</a>
-                            <a href="{{ route('hydrant.edit', $h->code) }}" class="text-yellow-600 hover:text-yellow-800" title="Edit">Edit</a>
+                            <a href="{{ route('hydrant.show', $h->code) }}" class="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium">Detail / Inspeksi</a>
+                            <a href="{{ route('hydrant.edit', $h->code) }}" class="px-3 py-1 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 rounded-lg text-xs font-medium">Edit</a>
                         </div>
                     </td>
                 </tr>

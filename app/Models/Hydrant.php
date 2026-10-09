@@ -30,6 +30,16 @@ class Hydrant extends Model
         return $this->hasOne(HydrantInspection::class)->latestOfMany('inspected_at');
     }
 
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(HydrantMaintenance::class)->orderByDesc('maintenance_date')->orderByDesc('id');
+    }
+
+    public function latestMaintenance(): HasOne
+    {
+        return $this->hasOne(HydrantMaintenance::class)->latestOfMany('maintenance_date');
+    }
+
     public static function generateCode(): string
     {
         $last = static::orderByDesc('id')->first();

@@ -40,7 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/hydrant/{code}/inspeksi', [HydrantController::class, 'storeInspection'])->name('hydrant.inspeksi.store');
     Route::post('/hydrant-inspeksi', [HydrantController::class, 'storeInspectionAdmin'])->name('hydrant.inspeksi.store.admin');
     Route::post('/hydrant-inspeksi/export', [HydrantController::class, 'exportInspection'])->name('hydrant.inspeksi.export');
+    Route::post('/hydrant-inspeksi/import', [HydrantController::class, 'importInspeksi'])->name('hydrant.inspeksi.import');
     Route::delete('/hydrant-inspeksi/{id}', [HydrantController::class, 'destroyInspection'])->name('hydrant.inspeksi.destroy');
+
+    // HYDRANT maintenance
+    Route::post('/hydrant/{code}/maintenance', [HydrantController::class, 'storeMaintenance'])->name('hydrant.maintenance.store');
+    Route::delete('/hydrant-maintenance/{id}', [HydrantController::class, 'destroyMaintenance'])->name('hydrant.maintenance.destroy');
 
     // APAR management (these must be before the public show route for {code} pattern)
     Route::get('/apar', [AparController::class, 'index'])->name('apar.index');
