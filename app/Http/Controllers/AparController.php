@@ -489,15 +489,31 @@ class AparController extends Controller
     public function dashboard()
     {
         $today = Carbon::today();
+        // APAR Stats
         $total        = Apar::count();
         $expired      = Apar::whereDate('expiry_date', '<', $today)->count();
         $nearExpiry   = Apar::whereDate('expiry_date', '>=', $today)
                             ->whereDate('expiry_date', '<=', $today->copy()->addDays(30))
                             ->count();
         $good         = $total - $expired - $nearExpiry;
-
         $recentApars  = Apar::orderByDesc('updated_at')->limit(5)->get();
 
-        return view('dashboard', compact('total', 'expired', 'nearExpiry', 'good', 'recentApars'));
+        // Hydrant Stats
+        $hydrantTotal          = \App\Models\Hydrant::count();
+        $hydrantGood           = \App\Models\Hydrant::where('condition', 'Good')->count();
+        $hydrantNeedsAttention = \App\Models\Hydrant::where('condition', 'Needs Attention')->count();
+        $hydrantDamaged        = \App\Models\Hydrant::where('condition', 'Damaged')->count();
+
+        $currentPeriode = now()->format('Y-m');
+        $hydrantSudahInspeksi  = \App\Models\HydrantInspection::where('periode', $currentPeriode)->distinct('hydrant_id')->count();
+        $hydrantBelumInspeksi  = $hydrantTotal - $hydrantSudahInspeksi;
+
+        $recentHydrants = \App\Models\Hydrant::with('latestInspection')->orderByDesc('updated_at')->take(5)->get();
+
+        return view('dashboard', compact(
+            'total', 'expired', 'nearExpiry', 'good', 'recentApars',
+            'hydrantTotal', 'hydrantGood', 'hydrantNeedsAttention', 'hydrantDamaged',
+            'hydrantSudahInspeksi', 'hydrantBelumInspeksi', 'recentHydrants'
+        ));
     }
 }

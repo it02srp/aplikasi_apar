@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AparController;
+use App\Http\Controllers\HydrantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,24 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->group(function () {
     Route::get('/', fn() => redirect()->route('dashboard'));
     Route::get('/dashboard', [AparController::class, 'dashboard'])->name('dashboard');
+
+    // HYDRANT management
+    Route::get('/hydrant', [HydrantController::class, 'index'])->name('hydrant.index');
+    Route::get('/hydrant/create', [HydrantController::class, 'create'])->name('hydrant.create');
+    Route::post('/hydrant', [HydrantController::class, 'store'])->name('hydrant.store');
+    Route::get('/hydrant/{code}/edit', [HydrantController::class, 'edit'])->name('hydrant.edit');
+    Route::put('/hydrant/{code}', [HydrantController::class, 'update'])->name('hydrant.update');
+    Route::get('/hydrant/print-all', [HydrantController::class, 'printAll'])->name('hydrant.print-all');
+    Route::get('/hydrant/{code}/print', [HydrantController::class, 'print'])->name('hydrant.print');
+    Route::get('/hydrant/export/data', [HydrantController::class, 'exportData'])->name('hydrant.export');
+    Route::delete('/hydrant/{code}', [HydrantController::class, 'destroy'])->name('hydrant.destroy');
+
+    // HYDRANT inspeksi
+    Route::get('/hydrant-inspeksi', [HydrantController::class, 'inspectionIndex'])->name('hydrant.inspeksi.index');
+    Route::post('/hydrant/{code}/inspeksi', [HydrantController::class, 'storeInspection'])->name('hydrant.inspeksi.store');
+    Route::post('/hydrant-inspeksi', [HydrantController::class, 'storeInspectionAdmin'])->name('hydrant.inspeksi.store.admin');
+    Route::post('/hydrant-inspeksi/export', [HydrantController::class, 'exportInspection'])->name('hydrant.inspeksi.export');
+    Route::delete('/hydrant-inspeksi/{id}', [HydrantController::class, 'destroyInspection'])->name('hydrant.inspeksi.destroy');
 
     // APAR management (these must be before the public show route for {code} pattern)
     Route::get('/apar', [AparController::class, 'index'])->name('apar.index');
@@ -63,3 +82,4 @@ Route::middleware('auth')->group(function () {
 
 // Public APAR detail — placed after auth routes so /apar/create is caught first
 Route::get('/apar/{code}', [AparController::class, 'show'])->name('apar.show');
+Route::get('/hydrant/{code}', [HydrantController::class, 'show'])->name('hydrant.show');

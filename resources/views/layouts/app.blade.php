@@ -94,9 +94,38 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
-                <span>Pemeriksaan Berkala</span>
+                <span>Pemeriksaan APAR</span>
                 @if(request()->routeIs('apar.inspection.*'))
                     <span class="ml-auto w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                @endif
+            </a>
+
+            <div class="my-4 border-t border-gray-200"></div>
+            <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold px-3 mb-2">Hydrant</p>
+
+            <a href="{{ route('hydrant.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors
+                      {{ request()->routeIs('hydrant.*') && !request()->routeIs('hydrant.inspeksi.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span>Daftar Hydrant</span>
+                @if(request()->routeIs('hydrant.*') && !request()->routeIs('hydrant.inspeksi.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                @endif
+            </a>
+
+            <a href="{{ route('hydrant.inspeksi.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors
+                      {{ request()->routeIs('hydrant.inspeksi.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span>Inspeksi Hydrant</span>
+                @if(request()->routeIs('hydrant.inspeksi.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
                 @endif
             </a>
 
