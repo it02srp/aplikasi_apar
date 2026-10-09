@@ -45,11 +45,7 @@
                 font-weight: 600;
                 text-decoration: none;
             }
-            .label-card {
-                box-shadow: 0 6px 24px rgba(0,0,0,0.15);
-                width: 320px;
-                height: 226px;
-            }
+            .label-card { width: 320px; }
         }
 
         @media print {
@@ -59,36 +55,27 @@
 
             .label-card {
                 width: 8.5cm !important;
-                height: 6cm !important;
+                height: auto !important;
                 border: 1.5px solid #16a34a !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
+                overflow: visible !important;
             }
 
-            .label-logo { height: 9mm !important; }
-
-            .label-top { padding: 5px 8px 4px !important; gap: 3px !important; }
-
-            .label-company { font-size: 8.5pt !important; letter-spacing: 0.5px !important; }
-
-            .label-qr { padding: 2px !important; }
-
-            .label-qr canvas,
-            .label-qr img {
-                width: 3.8cm !important;
-                height: 3.8cm !important;
-            }
-
-            .label-footer { font-size: 11pt !important; padding: 3px 8px 2px !important; }
-
-            .label-location { font-size: 7.5pt !important; padding: 0 8px 5px !important; }
+            .label-top { padding: 4px 8px 3px !important; gap: 6px !important; }
+            .label-logo { height: 8mm !important; }
+            .label-company { font-size: 8pt !important; }
+            .label-qr { padding: 3px 4px !important; }
+            .label-qr canvas, .label-qr img { width: 3.2cm !important; height: 3.2cm !important; }
+            .label-footer { font-size: 10pt !important; padding: 3px 8px 1px !important; }
+            .label-location { font-size: 7pt !important; padding: 1px 8px 4px !important; }
         }
 
         .label-card {
             background: white;
             border: 2px solid #16a34a;
             border-radius: 10px;
-            overflow: hidden;
+            overflow: visible;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -128,7 +115,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6px;
+            padding: 8px;
         }
 
         .label-footer {
@@ -145,7 +132,7 @@
         .label-location {
             width: 100%;
             text-align: center;
-            padding: 0 8px 7px;
+            padding: 1px 8px 8px;
             font-family: Arial, sans-serif;
             font-size: 10px;
             color: #444;
