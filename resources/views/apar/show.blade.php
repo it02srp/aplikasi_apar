@@ -159,7 +159,6 @@
                         <div>
                             <p class="text-xs text-gray-400 font-medium">Inspeksi Terakhir</p>
                             <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $latestInsp->inspected_at->format('d M Y') }}</p>
-                            <p class="text-xs font-semibold text-blue-600">{{ $latestInsp->inspected_at->format('H:i') }} WIB</p>
                         </div>
                         @elseif($apar->last_inspection_date)
                         <div>
@@ -302,9 +301,6 @@
                                 </span>
                                 <span class="text-xs text-gray-500">
                                     {{ $inspection->inspected_at->format('d M Y') }}
-                                </span>
-                                <span class="text-xs font-semibold text-blue-600">
-                                    {{ $inspection->inspected_at->format('H:i') }} WIB
                                 </span>
                             </div>
                             @auth

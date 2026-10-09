@@ -254,7 +254,6 @@
                                 {{ $ins->isAllOk() ? '✓ Semua OK' : '✗ Ada Masalah' }}
                             </span>
                             <span class="text-xs text-gray-500">{{ $ins->inspected_at->format('d M Y') }}</span>
-                            <span class="text-xs font-semibold text-blue-600">{{ $ins->inspected_at->format('H:i') }} WIB</span>
                         </div>
                         @auth
                         <form action="{{ route('hydrant.inspeksi.destroy', $ins->id) }}" method="POST" onsubmit="return confirm('Hapus?')" class="inline">
