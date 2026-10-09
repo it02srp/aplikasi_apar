@@ -154,7 +154,7 @@ class HydrantController extends Controller
             'item_10_hose_rack'   => 'required|in:OK,NOT OK',
             'item_11_pompa'       => 'required|in:OK,NOT OK',
             'notes'               => 'nullable|string',
-            'photo'               => 'nullable|image|max:5120',
+            'photo'               => 'required|image|max:5120',
         ]);
 
         $hydrant = Hydrant::findOrFail($hydrantId);
@@ -168,8 +168,9 @@ class HydrantController extends Controller
             return back()->with('error', 'Hydrant ini sudah diinspeksi pada periode tersebut.');
         }
 
-        $validated['hydrant_id'] = $hydrant->id;
+        $validated['hydrant_id']   = $hydrant->id;
         $validated['inspected_by'] = Auth::id();
+        $validated['photo']        = $request->file('photo')->store('photos/hydrant/inspeksi', 'public');
 
         $inspection = HydrantInspection::create($validated);
 
@@ -236,10 +237,12 @@ class HydrantController extends Controller
             'maintenance_type' => 'required|in:' . implode(',', HydrantMaintenance::$types),
             'technician'       => 'nullable|string|max:100',
             'notes'            => 'nullable|string',
+            'photo'            => 'required|image|max:5120',
         ]);
 
         $validated['hydrant_id']   = $hydrant->id;
         $validated['performed_by'] = Auth::id();
+        $validated['photo']        = $request->file('photo')->store('photos/hydrant/maintenance', 'public');
 
         HydrantMaintenance::create($validated);
 

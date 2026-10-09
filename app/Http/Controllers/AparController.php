@@ -100,6 +100,7 @@ class AparController extends Controller
             'kondisi_tabung'    => 'required|in:OK,NOT OK',
             'kondisi_masa_apar' => 'required|in:OK,NOT OK',
             'notes'             => 'nullable|string',
+            'photo'             => 'required|image|max:5120',
         ]);
 
         $now = Carbon::now();
@@ -115,6 +116,7 @@ class AparController extends Controller
             'kondisi_tabung'    => $validated['kondisi_tabung'],
             'kondisi_masa_apar' => $validated['kondisi_masa_apar'],
             'notes'             => $validated['notes'] ?? null,
+            'photo'             => $request->file('photo')->store('photos/apar/inspeksi', 'public'),
         ]);
 
         // Update last_inspection_date on the APAR
@@ -200,7 +202,7 @@ class AparController extends Controller
             'kondisi_tabung'    => 'required|in:OK,NOT OK',
             'kondisi_masa_apar' => 'required|in:OK,NOT OK',
             'notes'             => 'nullable|string',
-            'photo'             => 'nullable|image|max:5120',
+            'photo'             => 'required|image|max:5120',
         ], [
             'apar_code.required' => 'Pilih APAR terlebih dahulu.',
             'apar_code.exists'   => 'APAR tidak ditemukan.',
@@ -220,6 +222,7 @@ class AparController extends Controller
             'kondisi_tabung'    => $validated['kondisi_tabung'],
             'kondisi_masa_apar' => $validated['kondisi_masa_apar'],
             'notes'             => $validated['notes'] ?? null,
+            'photo'             => $request->file('photo')->store('photos/apar/inspeksi', 'public'),
         ]);
 
         $apar->update(['last_inspection_date' => $now->toDateString()]);
@@ -258,7 +261,7 @@ class AparController extends Controller
             'maintenance_type'      => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
             'technician'            => 'nullable|string|max:255',
             'notes'                 => 'nullable|string',
-            'photo'                 => 'nullable|image|max:5120',
+            'photo'                 => 'required|image|max:5120',
         ], [
             'apar_code.required'            => 'Pilih APAR terlebih dahulu.',
             'apar_code.exists'              => 'APAR tidak ditemukan.',
@@ -277,6 +280,7 @@ class AparController extends Controller
             'technician'           => $validated['technician'] ?? null,
             'notes'                => $validated['notes'] ?? null,
             'performed_by'         => Auth::id(),
+            'photo'                => $request->file('photo')->store('photos/apar/maintenance', 'public'),
         ]);
 
         // Update tanggal inspeksi di data APAR
@@ -299,7 +303,7 @@ class AparController extends Controller
             'maintenance_type'      => 'required|in:Inspeksi Rutin,Pengisian Ulang,Penggantian Komponen,Perbaikan,Lainnya',
             'technician'            => 'nullable|string|max:255',
             'notes'                 => 'nullable|string',
-            'photo'                 => 'nullable|image|max:5120',
+            'photo'                 => 'required|image|max:5120',
         ], [
             'maintenance_date.required'  => 'Tanggal inspeksi wajib diisi.',
             'maintenance_type.required'  => 'Jenis maintenance wajib dipilih.',
@@ -314,6 +318,7 @@ class AparController extends Controller
             'technician'           => $validated['technician'] ?? null,
             'notes'                => $validated['notes'] ?? null,
             'performed_by'         => Auth::id(),
+            'photo'                => $request->file('photo')->store('photos/apar/maintenance', 'public'),
         ]);
 
         // Update tanggal inspeksi di data APAR

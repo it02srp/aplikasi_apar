@@ -319,13 +319,23 @@
                             </div>
                             @endforeach
                         </div>
-                        @if($inspection->notes || $inspection->inspector)
-                        <div class="border-t border-gray-100 px-3 py-1.5 flex items-center justify-between gap-2">
-                            @if($inspection->notes)
-                            <p class="text-xs text-gray-400 italic truncate">{{ $inspection->notes }}</p>
+                        @if($inspection->notes || $inspection->inspector || $inspection->photo)
+                        <div class="border-t border-gray-100 px-3 py-1.5">
+                            @if($inspection->notes || $inspection->inspector)
+                            <div class="flex items-center justify-between gap-2">
+                                @if($inspection->notes)
+                                <p class="text-xs text-gray-400 italic truncate">{{ $inspection->notes }}</p>
+                                @endif
+                                @if($inspection->inspector)
+                                <p class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">{{ $inspection->inspector->username }}</p>
+                                @endif
+                            </div>
                             @endif
-                            @if($inspection->inspector)
-                            <p class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">{{ $inspection->inspector->username }}</p>
+                            @if($inspection->photo)
+                            <a href="{{ asset('storage/' . $inspection->photo) }}" target="_blank" class="block mt-1.5">
+                                <img src="{{ asset('storage/' . $inspection->photo) }}" alt="Foto Bukti"
+                                     class="rounded-lg max-h-40 w-auto border border-gray-200 hover:opacity-90 transition">
+                            </a>
                             @endif
                         </div>
                         @endif
@@ -493,6 +503,12 @@
                             @endif
                             @if($m->performer)
                             <p class="text-xs text-gray-400 mt-1">Oleh: {{ $m->performer->username }}</p>
+                            @endif
+                            @if($m->photo)
+                            <a href="{{ asset('storage/' . $m->photo) }}" target="_blank" class="block mt-1.5">
+                                <img src="{{ asset('storage/' . $m->photo) }}" alt="Foto Bukti"
+                                     class="rounded-lg max-h-40 w-auto border border-gray-200 hover:opacity-90 transition">
+                            </a>
                             @endif
                         </div>
                     </div>

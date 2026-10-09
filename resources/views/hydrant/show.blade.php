@@ -282,10 +282,20 @@
                         </div>
                         @endforeach
                     </div>
-                    @if($ins->notes || $ins->inspector)
-                    <div class="border-t border-gray-100 px-3 py-1.5 flex justify-between gap-2 text-xs text-gray-400">
-                        @if($ins->notes)<p class="italic truncate">{{ $ins->notes }}</p>@endif
-                        @if($ins->inspector)<p class="whitespace-nowrap shrink-0">{{ $ins->inspector->username }}</p>@endif
+                    @if($ins->notes || $ins->inspector || $ins->photo)
+                    <div class="border-t border-gray-100 px-3 py-1.5">
+                        @if($ins->notes || $ins->inspector)
+                        <div class="flex justify-between gap-2 text-xs text-gray-400">
+                            @if($ins->notes)<p class="italic truncate">{{ $ins->notes }}</p>@endif
+                            @if($ins->inspector)<p class="whitespace-nowrap shrink-0">{{ $ins->inspector->username }}</p>@endif
+                        </div>
+                        @endif
+                        @if($ins->photo)
+                        <a href="{{ asset('storage/' . $ins->photo) }}" target="_blank" class="block mt-1.5">
+                            <img src="{{ asset('storage/' . $ins->photo) }}" alt="Foto Bukti"
+                                 class="rounded-lg max-h-40 w-auto border border-gray-200 hover:opacity-90 transition">
+                        </a>
+                        @endif
                     </div>
                     @endif
                 </div>
@@ -420,6 +430,12 @@
                         @if($mt->technician)<p class="text-xs text-gray-500 mt-1">Teknisi: {{ $mt->technician }}</p>@endif
                         @if($mt->notes)<p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ $mt->notes }}</p>@endif
                         @if($mt->performer)<p class="text-xs text-gray-400 mt-1">Oleh: {{ $mt->performer->username }}</p>@endif
+                        @if($mt->photo)
+                        <a href="{{ asset('storage/' . $mt->photo) }}" target="_blank" class="block mt-1.5">
+                            <img src="{{ asset('storage/' . $mt->photo) }}" alt="Foto Bukti"
+                                 class="rounded-lg max-h-40 w-auto border border-gray-200 hover:opacity-90 transition">
+                        </a>
+                        @endif
                     </div>
                 </div>
                 @endforeach
