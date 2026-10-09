@@ -130,7 +130,7 @@
             background: #000;
             color: #fff;
             text-align: center;
-            padding: 4px 4px;
+            padding: 3px 4px;
             font-family: Arial, sans-serif;
             font-weight: 800;
             font-size: 9px;
@@ -138,6 +138,16 @@
             text-transform: uppercase;
             width: 100%;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .label-logo {
+            height: 11px;
+            width: auto;
+            display: block;
         }
 
         .label-qr {
@@ -168,7 +178,10 @@
     </div>
 
     <div class="label-card">
-        <div class="label-header">PT. SINAR RIMBA PASIFIK</div>
+        <div class="label-header">
+            <img src="{{ asset('logo_SRP.png') }}" class="label-logo" alt="SRP">
+            PT. SINAR RIMBA PASIFIK
+        </div>
         <div class="label-qr">
             <div id="qrcode"></div>
         </div>
