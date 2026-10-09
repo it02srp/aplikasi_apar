@@ -72,35 +72,49 @@
 
             .label-wrapper {
                 width: 4.5cm;
-                height: 5.5cm;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
             .label-card {
                 width: 4.5cm !important;
-                height: 5.5cm !important;
+                height: auto !important;
                 border: 1px solid #16a34a !important;
                 border-radius: 4px !important;
                 box-shadow: none !important;
             }
 
             .label-logo {
-                height: 6mm !important;
+                height: 5mm !important;
+            }
+
+            .label-top {
+                padding: 4px 4px 3px !important;
+                gap: 2px !important;
+            }
+
+            .label-qr {
+                padding: 4px !important;
             }
 
             .label-qr canvas,
             .label-qr img {
-                width: 3.5cm !important;
-                height: 3.5cm !important;
+                width: 3.2cm !important;
+                height: 3.2cm !important;
             }
 
             .label-company {
-                font-size: 7pt !important;
+                font-size: 6.5pt !important;
             }
 
             .label-footer {
-                font-size: 9pt !important;
+                font-size: 8.5pt !important;
+                padding: 3px 4px 1px !important;
+            }
+
+            .label-location {
+                font-size: 6pt !important;
+                padding: 0 4px 4px !important;
             }
         }
 
