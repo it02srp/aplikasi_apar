@@ -125,12 +125,22 @@
         .label-footer {
             width: 100%;
             text-align: center;
-            padding: 4px 4px 7px;
+            padding: 4px 4px 2px;
             font-family: Arial, sans-serif;
             font-weight: 800;
             font-size: 13px;
             color: #111;
             border-top: 1px solid #e5e7eb;
+        }
+
+        .label-location {
+            width: 100%;
+            text-align: center;
+            padding: 0 4px 6px;
+            font-family: Arial, sans-serif;
+            font-size: 8px;
+            color: #555;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -150,6 +160,7 @@
             <div id="qrcode"></div>
         </div>
         <div class="label-footer">{{ $apar->code }}</div>
+        <div class="label-location">{{ $apar->location }}</div>
     </div>
 
     <script>
