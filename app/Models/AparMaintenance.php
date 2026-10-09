@@ -13,6 +13,7 @@ class AparMaintenance extends Model
         'maintenance_type',
         'technician',
         'notes',
+        'photo',
         'performed_by',
     ];
 

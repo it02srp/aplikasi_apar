@@ -212,7 +212,7 @@
                 </svg>
             </button>
         </div>
-        <form method="POST" action="{{ route('apar.inspection.store.admin') }}" class="p-6 space-y-4">
+        <form method="POST" action="{{ route('apar.inspection.store.admin') }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2 text-xs text-yellow-800">
                 Tanggal &amp; jam pemeriksaan akan diambil otomatis saat disimpan.
@@ -270,6 +270,15 @@
                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
                                  focus:ring-2 focus:ring-yellow-400 resize-none">{{ old('notes') }}</textarea>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                <input type="file" name="photo" accept="image/*" capture="environment" required
+                       class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-100 file:text-yellow-700 hover:file:bg-yellow-200"
+                       onchange="previewPhotoAdmin(this, 'preview-admin-insp')">
+                <img id="preview-admin-insp" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                @error('photo') <p class="text-xs text-red-500 mt-0.5">{{  }}</p> @enderror
+            </div>
             <div class="flex gap-3 pt-1">
                 <button type="submit"
                     class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
@@ -287,6 +296,15 @@
 
 @push('scripts')
 <script>
+function previewPhotoAdmin(input, previewId) {
+    const img = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; img.classList.remove('hidden'); };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
     @if($errors->any())
         document.getElementById('modal-tambah').classList.remove('hidden');
     @endif

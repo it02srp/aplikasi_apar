@@ -27,6 +27,7 @@ class HydrantInspection extends Model
         'item_10_hose_rack',
         'item_11_pompa',
         'notes',
+        'photo',
     ];
 
     protected $casts = [

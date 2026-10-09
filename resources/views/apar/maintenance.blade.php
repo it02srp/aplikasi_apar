@@ -304,7 +304,7 @@
                 </svg>
             </button>
         </div>
-        <form action="{{ route('apar.maintenance.store.admin') }}" method="POST" class="p-6 space-y-4">
+        <form action="{{ route('apar.maintenance.store.admin') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div>
                 <label class="text-sm text-gray-700 font-medium block mb-1">APAR <span class="text-red-500">*</span></label>
@@ -357,6 +357,15 @@
                 <textarea name="notes" rows="3" placeholder="Deskripsi pekerjaan, temuan, hasil inspeksi, dll."
                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none">{{ old('notes') }}</textarea>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                <input type="file" name="photo" accept="image/*" capture="environment" required
+                       class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                       onchange="previewPhotoAdmin(this, 'preview-admin-maint')">
+                <img id="preview-admin-maint" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                @error('photo') <p class="text-xs text-red-500 mt-0.5">{{  }}</p> @enderror
+            </div>
             <div class="flex gap-3 pt-1">
                 <button type="submit"
                         class="flex-1 bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
@@ -374,6 +383,15 @@
 
 @push('scripts')
 <script>
+function previewPhotoAdmin(input, previewId) {
+    const img = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; img.classList.remove('hidden'); };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
     @if($errors->any())
         document.getElementById('modal-maintenance').classList.remove('hidden');
     @endif

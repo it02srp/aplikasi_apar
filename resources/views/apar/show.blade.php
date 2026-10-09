@@ -200,7 +200,7 @@
                 </button>
                 <div id="form-inspeksi" class="hidden p-5 bg-yellow-50 border-t border-yellow-100">
                     <p class="text-xs text-yellow-700 mb-3">Tanggal &amp; jam diambil otomatis saat disimpan.</p>
-                    <form action="{{ route('apar.inspection.store', $apar->code) }}" method="POST" class="space-y-2">
+                    <form action="{{ route('apar.inspection.store', $apar->code) }}" method="POST" enctype="multipart/form-data" class="space-y-2">
                         @csrf
                         @php
                             $kondisiItems = ['kondisi_handle' => '1 Handle','kondisi_selang' => '2 Selang','kondisi_pin_kunci' => '3 Pin Kunci','kondisi_indikator' => '4 Indikator','kondisi_tabung' => '5 Tabung','kondisi_masa_apar' => '6 Masa Apar'];
@@ -222,6 +222,14 @@
                         @endforeach
                         <textarea name="notes" rows="2" placeholder="Catatan (opsional)"
                                   class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-yellow-400">{{ old('notes') }}</textarea>
+                        <div>
+                            <label class="block text-xs font-semibold text-yellow-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                            <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                            <input type="file" name="photo" accept="image/*" capture="environment" required
+                                   class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-100 file:text-yellow-700 hover:file:bg-yellow-200"
+                                   onchange="previewPhoto(this, 'preview-inspeksi')">
+                            <img id="preview-inspeksi" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                        </div>
                         <button type="submit"
                                 class="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold py-2 rounded-lg transition">
                             Simpan Pemeriksaan
@@ -344,7 +352,7 @@
                     </svg>
                 </button>
                 <div id="form-maintenance" class="hidden p-5 bg-green-50 border-t border-green-100">
-                    <form action="{{ route('apar.maintenance.store', $apar->code) }}" method="POST" class="space-y-3">
+                    <form action="{{ route('apar.maintenance.store', $apar->code) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                         @csrf
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -371,6 +379,14 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500">
                         <textarea name="notes" rows="2" placeholder="Catatan (opsional)"
                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-green-500">{{ old('notes') }}</textarea>
+                        <div>
+                            <label class="block text-xs font-semibold text-green-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                            <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                            <input type="file" name="photo" accept="image/*" capture="environment" required
+                                   class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                                   onchange="previewPhoto(this, 'preview-maintenance')">
+                            <img id="preview-maintenance" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                        </div>
                         <button type="submit"
                                 class="w-full bg-green-700 hover:bg-green-800 text-white text-sm font-semibold py-2 rounded-lg transition">
                             Simpan Maintenance
@@ -544,6 +560,19 @@ function filterYear(section, year) {
     if (activeBtn) {
         activeBtn.classList.remove(...inactiveColor);
         activeBtn.classList.add(...activeColor);
+    }
+}
+
+// ── Camera photo preview ──────────────────────────────────────────────────────
+function previewPhoto(input, previewId) {
+    const img = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            img.src = e.target.result;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
     }
 }
 

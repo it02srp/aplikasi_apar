@@ -161,7 +161,7 @@
                 </svg>
             </button>
             <div id="form-inspeksi" class="hidden p-5 bg-green-50 border-t border-green-100">
-                <form action="{{ route('hydrant.inspeksi.store', $hydrant->code) }}" method="POST" class="space-y-3">
+                <form action="{{ route('hydrant.inspeksi.store', $hydrant->code) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                     @csrf
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -207,6 +207,14 @@
                     @endforeach
                     <textarea name="notes" rows="2" placeholder="Catatan (opsional)"
                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-green-500">{{ old('notes') }}</textarea>
+                    <div>
+                        <label class="block text-xs font-semibold text-green-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                        <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                        <input type="file" name="photo" accept="image/*" capture="environment" required
+                               class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                               onchange="previewPhoto(this, 'preview-insp-hyd')">
+                        <img id="preview-insp-hyd" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                    </div>
                     <button type="submit"
                             class="w-full bg-green-700 hover:bg-green-800 text-white text-sm font-semibold py-2 rounded-lg transition">
                         Simpan Inspeksi
@@ -312,7 +320,7 @@
                 </svg>
             </button>
             <div id="form-maintenance" class="hidden p-5 bg-orange-50 border-t border-orange-100">
-                <form action="{{ route('hydrant.maintenance.store', $hydrant->code) }}" method="POST" class="space-y-3">
+                <form action="{{ route('hydrant.maintenance.store', $hydrant->code) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                     @csrf
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -334,6 +342,14 @@
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400">
                     <textarea name="notes" rows="2" placeholder="Catatan (opsional)"
                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-orange-400">{{ old('notes') }}</textarea>
+                    <div>
+                        <label class="block text-xs font-semibold text-orange-600 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                        <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                        <input type="file" name="photo" accept="image/*" capture="environment" required
+                               class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-orange-100 file:text-orange-700 hover:file:bg-orange-200"
+                               onchange="previewPhoto(this, 'preview-maint-hyd')">
+                        <img id="preview-maint-hyd" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                    </div>
                     <button type="submit"
                             class="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2 rounded-lg transition">
                         Simpan Maintenance
@@ -456,6 +472,15 @@ function toggleForm(id) {
     const icon = document.getElementById('icon-form-' + id.replace('form-',''));
     el.classList.toggle('hidden');
     icon.style.transform = el.classList.contains('hidden') ? '' : 'rotate(180deg)';
+}
+
+function previewPhoto(input, previewId) {
+    const img = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; img.classList.remove('hidden'); };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 function filterYear(section, year) {

@@ -154,6 +154,7 @@ class HydrantController extends Controller
             'item_10_hose_rack'   => 'required|in:OK,NOT OK',
             'item_11_pompa'       => 'required|in:OK,NOT OK',
             'notes'               => 'nullable|string',
+            'photo'               => 'nullable|image|max:5120',
         ]);
 
         $hydrant = Hydrant::findOrFail($hydrantId);

@@ -17,6 +17,7 @@ class AparInspection extends Model
         'kondisi_tabung',
         'kondisi_masa_apar',
         'notes',
+        'photo',
     ];
 
     protected function casts(): array

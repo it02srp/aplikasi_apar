@@ -27,7 +27,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form action="{{ route('hydrant.inspeksi.store.admin') }}" method="POST" class="p-5 space-y-4">
+            <form action="{{ route('hydrant.inspeksi.store.admin') }}" method="POST" enctype="multipart/form-data" class="p-5 space-y-4">
                 @csrf
                 <div class="grid sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
@@ -98,6 +98,16 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
                     <textarea name="notes" rows="2" placeholder="Catatan tambahan (opsional)"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 resize-none">{{ old('notes') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">📷 Foto Bukti <span class="text-red-500">*</span></label>
+                    <p class="text-xs text-gray-400 mb-1.5">Wajib ambil foto langsung dari kamera — tidak bisa dari galeri.</p>
+                    <input type="file" name="photo" accept="image/*" capture="environment" required
+                           class="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                           onchange="previewPhotoAdmin(this, 'preview-hyd-insp')">
+                    <img id="preview-hyd-insp" src="" alt="" class="hidden mt-2 rounded-lg max-h-36 w-auto border border-gray-200">
+                    @error('photo') <p class="text-xs text-red-500 mt-0.5">{{  }}</p> @enderror
                 </div>
 
                 <div class="flex gap-3 pt-2">
