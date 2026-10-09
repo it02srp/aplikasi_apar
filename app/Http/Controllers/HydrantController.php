@@ -160,15 +160,6 @@ class HydrantController extends Controller
 
         $hydrant = Hydrant::findOrFail($hydrantId);
 
-        // Check unique per periode
-        $exists = HydrantInspection::where('hydrant_id', $hydrant->id)
-            ->where('periode', $validated['periode'])
-            ->exists();
-
-        if ($exists) {
-            return back()->with('error', 'Hydrant ini sudah diinspeksi pada periode tersebut.');
-        }
-
         $validated['hydrant_id']   = $hydrant->id;
         $validated['inspected_by'] = Auth::id();
         $validated['inspected_at'] = Carbon::now();
