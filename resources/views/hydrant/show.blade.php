@@ -117,15 +117,12 @@
                         <p class="text-sm font-semibold text-gray-800 mt-0.5">
                             {{ $latest ? $latest->inspected_at->format('d M Y') : '-' }}
                         </p>
-                        @endif
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Maintenance Terakhir</p>
                         <p class="text-sm font-semibold text-gray-800 mt-0.5">
                             {{ $latestMt ? $latestMt->maintenance_date->format('d M Y') : '-' }}
                         </p>
-                        @if($latestMt)
-                        @endif
                     </div>
                 </div>
 
